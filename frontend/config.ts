@@ -4,10 +4,6 @@
 // Update this to match your deployment
 export const API_ENDPOINT = 'http://localhost:4000';
 
-// Default API key for demo purposes
-// In production, users should set their own API keys via Settings
-export const DEFAULT_API_KEY = 'demo-admin-key';
-
 // Console version information
 export const CONSOLE_VERSION = '1.0.0';
 export const CONSOLE_BUILD = 'Phase 7 - Web Console';
@@ -46,4 +42,11 @@ export const UI_CONFIG = {
     staleTime: 30000,
     refetchOnWindowFocus: false,
   },
+};
+
+// Setup instructions for users
+export const SETUP_INSTRUCTIONS = {
+  createApiKey: 'npx tsx scripts/create-admin-key.ts',
+  seedDatabase: 'npx tsx scripts/seed.ts',
+  healthCheck: 'npx tsx scripts/health-check.ts',
 };

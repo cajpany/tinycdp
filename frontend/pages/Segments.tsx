@@ -10,8 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/components/ui/use-toast';
-import { getBackendClient, handleApiError } from '@/lib/api';
-import { Plus, Edit, Trash2, Play, AlertCircle, CheckCircle, Download } from 'lucide-react';
+import { getBackendClient, handleApiError, apiKeyManager } from '@/lib/api';
+import { Plus, Edit, Trash2, Play, AlertCircle, CheckCircle, Download, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface SegmentForm {
@@ -31,6 +31,7 @@ export function Segments() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const backend = getBackendClient();
+  const hasApiKey = apiKeyManager.hasKey();
 
   const { data: segments, isLoading } = useQuery({
     queryKey: ['segments'],
@@ -42,6 +43,7 @@ export function Segments() {
         throw error;
       }
     },
+    enabled: hasApiKey,
   });
 
   const createSegment = useMutation({
@@ -156,6 +158,30 @@ export function Segments() {
     setTestResult(null);
     setIsTestOpen(true);
   };
+
+  // Show API key setup message if no key is configured
+  if (!hasApiKey) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold text-gray-900">Segment Definitions</h1>
+        
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between">
+            <span>
+              To manage segments, please configure your API key first.
+            </span>
+            <Button asChild variant="outline" size="sm">
+              <Link to="/settings">
+                <Settings className="w-4 h-4 mr-2" />
+                Go to Settings
+              </Link>
+            </Button>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

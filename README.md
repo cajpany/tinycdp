@@ -21,17 +21,39 @@ TinyCDP is an open-source, real-time traits & segments engine - a lightweight re
    encore db migrate
    ```
 
-4. Seed the database with sample data:
+4. Create demo API keys:
+   ```bash
+   npx tsx scripts/create-demo-key.ts
+   ```
+
+5. Seed the database with sample data (optional):
    ```bash
    npx tsx scripts/seed.ts
    ```
 
-5. Start the development server:
+6. Start the development server:
    ```bash
    encore run
    ```
 
 The API will be available at `http://localhost:4000`
+
+## Web Console
+
+TinyCDP includes a web console for managing traits, segments, and flags:
+
+1. **Access the console**: Open `http://localhost:4000` in your browser (when running locally)
+2. **Configure API key**: Go to Settings and paste your admin API key
+3. **Start managing**: Create traits, segments, and feature flags through the UI
+
+### Console Features
+
+- **Dashboard**: System overview with metrics and activity
+- **Traits**: Create and manage trait definitions with expression testing
+- **Segments**: Define user segments with real-time validation
+- **Flags**: Configure feature flags with decision testing
+- **Users**: Search and explore user profiles and data
+- **Exports**: Export segment data as CSV files
 
 ## Project Structure
 
@@ -45,11 +67,14 @@ The API will be available at `http://localhost:4000`
 ├── decide/          # Low-latency decision API
 ├── admin/           # Admin operations
 └── exports/         # Data export functionality
+
+/frontend/           # React web console
+/packages/sdk/       # TypeScript SDK
 ```
 
 ## Core Features ✅
 
-### Phase 1-6 Complete!
+### Phase 1-7 Complete!
 
 **✅ Event Ingestion**: Track user events and manage identities
 - `POST /v1/identify` - Create/update user profiles
@@ -88,17 +113,24 @@ The API will be available at `http://localhost:4000`
 - Automatic retries and error handling
 - Offline queueing support
 
+**✅ Web Console**: Complete management interface
+- Dashboard with system metrics
+- Visual trait and segment management
+- Feature flag configuration
+- User search and debugging
+- Export management
+
 ## API Examples
 
 ### Basic Usage
 
 ```bash
-# 1. Create an admin API key
-npx tsx scripts/create-admin-key.ts
+# 1. Create demo API keys
+npx tsx scripts/create-demo-key.ts
 
 # 2. Track user events
 curl -X POST http://localhost:4000/v1/track \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Authorization: Bearer YOUR_WRITE_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "externalId": "user123",
@@ -106,27 +138,27 @@ curl -X POST http://localhost:4000/v1/track \
     "props": {"amount": 99.99}
   }'
 
-# 3. Create a trait definition
+# 3. Create a trait definition (via admin API or web console)
 curl -X POST http://localhost:4000/v1/admin/traits \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Authorization: Bearer YOUR_ADMIN_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "key": "frequent_buyer",
     "expression": "events.purchase.count_30d >= 3"
   }'
 
-# 4. Create a segment
+# 4. Create a segment (via admin API or web console)
 curl -X POST http://localhost:4000/v1/admin/segments \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Authorization: Bearer YOUR_ADMIN_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "key": "vip_users", 
     "rule": "frequent_buyer == true"
   }'
 
-# 5. Create a feature flag
+# 5. Create a feature flag (via admin API or web console)
 curl -X POST http://localhost:4000/v1/admin/flags \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Authorization: Bearer YOUR_ADMIN_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "key": "premium_features",
@@ -135,7 +167,7 @@ curl -X POST http://localhost:4000/v1/admin/flags \
 
 # 6. Make real-time decisions
 curl "http://localhost:4000/v1/decide?userId=user123&flag=premium_features" \
-  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Authorization: Bearer YOUR_READ_KEY"
 ```
 
 ### Admin & Debugging APIs
@@ -143,19 +175,19 @@ curl "http://localhost:4000/v1/decide?userId=user123&flag=premium_features" \
 ```bash
 # Search users
 curl "http://localhost:4000/v1/admin/users/search?query=user123" \
-  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Authorization: Bearer YOUR_ADMIN_KEY"
 
 # Get detailed user information
 curl "http://localhost:4000/v1/admin/users/USER_ID" \
-  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Authorization: Bearer YOUR_ADMIN_KEY"
 
 # Get system metrics
 curl "http://localhost:4000/v1/admin/metrics" \
-  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Authorization: Bearer YOUR_ADMIN_KEY"
 
 # Validate expressions
 curl -X POST http://localhost:4000/v1/admin/validate \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Authorization: Bearer YOUR_ADMIN_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "expression": "events.purchase.count_30d >= 1",
@@ -164,11 +196,11 @@ curl -X POST http://localhost:4000/v1/admin/validate \
 
 # Export segment to CSV
 curl "http://localhost:4000/v1/export/segment/vip_users" \
-  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Authorization: Bearer YOUR_ADMIN_KEY"
 
 # List available exports
 curl "http://localhost:4000/v1/export/list" \
-  -H "Authorization: Bearer YOUR_API_KEY"
+  -H "Authorization: Bearer YOUR_ADMIN_KEY"
 ```
 
 ### Trait Expression Examples
@@ -229,7 +261,7 @@ Test Phase 4 functionality:
 
 ```bash
 # Test segments and decision engine
-npx tsx scripts/test-phase4.ts YOUR_API_KEY
+npx tsx scripts/test-phase4.ts YOUR_ADMIN_KEY
 ```
 
 ### Debugging
@@ -248,7 +280,7 @@ For deployment issues, you can:
 
 3. **Test API functionality:**
    ```bash
-   npx tsx scripts/test-api.ts YOUR_API_KEY
+   npx tsx scripts/test-api.ts YOUR_WRITE_KEY
    ```
 
 ## Development Phases
@@ -261,45 +293,84 @@ This project is built in phases:
 - **Phase 4**: Segments & Decision Engine ✅
 - **Phase 5**: Admin API & Management ✅
 - **Phase 6**: TypeScript SDK ✅
-- **Phase 7**: Web Console
+- **Phase 7**: Web Console ✅
 
 See [PROJECT_PLAN.md](./PROJECT_PLAN.md) for detailed development roadmap.
 
-## What's Next?
+## Production Ready Features
 
-With Phase 6 complete, we now have a production-ready SDK!
+TinyCDP is now production-ready with:
 
-**Immediate next steps:**
-- Phase 7: Web console for visual management
+**✅ Complete API Coverage:**
+- Event tracking and identity management
+- Real-time trait computation
+- Segment evaluation
+- Feature flag decisions
+- Full admin APIs
+- CSV export functionality
+- User debugging and monitoring
 
-**Ready for production use:**
-- ✅ Event tracking and identity management
-- ✅ Real-time trait computation
-- ✅ Segment evaluation
-- ✅ Feature flag decisions
-- ✅ Complete admin APIs
-- ✅ CSV export functionality
-- ✅ User debugging and monitoring
-- ✅ Production-ready SDK
+**✅ Web Console:**
+- Visual management interface
+- Real-time metrics dashboard
+- Expression testing and validation
+- User search and debugging
+- Export management
+
+**✅ Production SDK:**
+- Browser and Node.js support
+- Event batching and offline queueing
+- Automatic retries and error handling
+- Full TypeScript support
+
+**✅ Developer Experience:**
+- Comprehensive testing tools
+- Health check endpoints
+- Detailed logging
+- Clear documentation
+
+## Getting Started with the Web Console
+
+1. **Start TinyCDP**:
+   ```bash
+   encore run
+   ```
+
+2. **Create API keys**:
+   ```bash
+   npx tsx scripts/create-demo-key.ts
+   ```
+
+3. **Access the console**: Open http://localhost:4000 in your browser
+
+4. **Configure API key**: 
+   - Go to Settings
+   - Paste your admin API key
+   - Save
+
+5. **Start building**:
+   - Create traits to define user characteristics
+   - Build segments to group users
+   - Set up feature flags for A/B testing
+   - Track events with the SDK
 
 ## Troubleshooting
 
-### Deployment Issues
+### Common Issues
 
-If you encounter deployment errors:
+- **Console shows "API key required"**: Go to Settings and configure your admin API key
+- **Database connection failures**: Check PostgreSQL is running and accessible
+- **Storage errors**: Verify object storage bucket configuration
+- **Service startup**: Check for port conflicts or missing dependencies
+- **Export failures**: Ensure object storage has proper write permissions
+
+### Getting Help
 
 1. **Check health endpoints** - All services now provide detailed health information
 2. **Review logs** - Enhanced logging provides better error context
 3. **Run health check script** - Use `npx tsx scripts/health-check.ts` for comprehensive testing
 4. **Verify database** - Ensure migrations have run successfully
 5. **Check storage** - Verify object storage is properly configured
-
-### Common Issues
-
-- **Database connection failures**: Check PostgreSQL is running and accessible
-- **Storage errors**: Verify object storage bucket configuration
-- **Service startup**: Check for port conflicts or missing dependencies
-- **Export failures**: Ensure object storage has proper write permissions
 
 ## License
 
