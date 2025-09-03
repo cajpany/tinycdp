@@ -49,7 +49,7 @@ The API will be available at `http://localhost:4000`
 
 ## Core Features ✅
 
-### Phase 1-4 Complete!
+### Phase 1-5 Complete!
 
 **✅ Event Ingestion**: Track user events and manage identities
 - `POST /v1/identify` - Create/update user profiles
@@ -70,10 +70,17 @@ The API will be available at `http://localhost:4000`
 - Built-in caching (60s TTL) for sub-150ms responses
 - Support for segment() and trait() functions in flag rules
 
-**✅ Admin APIs**: Complete management interface
+**✅ Complete Admin APIs**: Full management interface
 - CRUD operations for traits, segments, and flags
 - Expression validation and testing
+- User search and detailed debugging
+- System metrics and monitoring
 - Full API key authentication system
+
+**✅ CSV Export**: Data export functionality
+- `GET /v1/export/segment/:key` - Export segment users to CSV
+- `GET /v1/export/list` - List available exports
+- Secure signed download URLs
 
 ## API Examples
 
@@ -122,6 +129,39 @@ curl -X POST http://localhost:4000/v1/admin/flags \
 
 # 6. Make real-time decisions
 curl "http://localhost:4000/v1/decide?userId=user123&flag=premium_features" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+### Admin & Debugging APIs
+
+```bash
+# Search users
+curl "http://localhost:4000/v1/admin/users/search?query=user123" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Get detailed user information
+curl "http://localhost:4000/v1/admin/users/USER_ID" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Get system metrics
+curl "http://localhost:4000/v1/admin/metrics" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# Validate expressions
+curl -X POST http://localhost:4000/v1/admin/validate \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "expression": "events.purchase.count_30d >= 1",
+    "type": "trait"
+  }'
+
+# Export segment to CSV
+curl "http://localhost:4000/v1/export/segment/vip_users" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+# List available exports
+curl "http://localhost:4000/v1/export/list" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -213,11 +253,44 @@ This project is built in phases:
 - **Phase 2**: Identity & Event Ingestion ✅
 - **Phase 3**: Traits Engine ✅
 - **Phase 4**: Segments & Decision Engine ✅
-- **Phase 5**: Admin API & Management (Partial ✅)
+- **Phase 5**: Admin API & Management ✅
 - **Phase 6**: TypeScript SDK
 - **Phase 7**: Web Console
 
 See [PROJECT_PLAN.md](./PROJECT_PLAN.md) for detailed development roadmap.
+
+## Phase 5 New Features
+
+### Admin & Management APIs ✅
+
+**User Management:**
+- `GET /v1/admin/users/search` - Search users by alias or ID
+- `GET /v1/admin/users/:id` - Get detailed user information
+- Comprehensive user debugging with events, traits, segments
+
+**System Monitoring:**
+- `GET /v1/admin/metrics` - System-wide metrics and statistics
+- User activity metrics (daily, weekly, monthly)
+- Event statistics and top event types
+- Trait and segment usage statistics
+- Database table sizes and health
+
+**Expression Validation:**
+- `POST /v1/admin/validate` - Validate trait/segment/flag expressions
+- Supports trait DSL, segment rules, and flag rules
+- Detailed error reporting for invalid expressions
+
+### CSV Export System ✅
+
+**Segment Export:**
+- `GET /v1/export/segment/:key` - Export segment users to CSV format
+- Includes user IDs, aliases, membership details
+- Secure signed download URLs
+
+**Export Management:**
+- `GET /v1/export/list` - List all available export files
+- Automatic file naming with timestamps
+- Built-in object storage integration
 
 ## Performance
 
@@ -230,10 +303,9 @@ Current system delivers on performance targets:
 
 ## What's Next?
 
-With Phase 4 complete, we now have a fully functional real-time CDP! 
+With Phase 5 complete, we now have a comprehensive CDP with full admin capabilities!
 
 **Immediate next steps:**
-- Phase 5: Complete admin API and export functionality
 - Phase 6: TypeScript SDK for easy integration
 - Phase 7: Web console for visual management
 
@@ -242,7 +314,9 @@ With Phase 4 complete, we now have a fully functional real-time CDP!
 - ✅ Real-time trait computation
 - ✅ Segment evaluation
 - ✅ Feature flag decisions
-- ✅ Admin APIs for configuration
+- ✅ Complete admin APIs
+- ✅ CSV export functionality
+- ✅ User debugging and monitoring
 
 ## Troubleshooting
 
@@ -261,6 +335,7 @@ If you encounter deployment errors:
 - **Database connection failures**: Check PostgreSQL is running and accessible
 - **Storage errors**: Verify object storage bucket configuration
 - **Service startup**: Check for port conflicts or missing dependencies
+- **Export failures**: Ensure object storage has proper write permissions
 
 ## License
 

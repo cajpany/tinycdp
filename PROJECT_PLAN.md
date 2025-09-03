@@ -286,35 +286,45 @@ Response: {
 
 ---
 
-## Phase 5: Admin API & Management (Day 6)
+## Phase 5: Admin API & Management (Day 6) ✅
 
-### 5.1 Admin Service
-- [ ] CRUD operations for trait definitions
-- [ ] CRUD operations for segment definitions  
-- [ ] CRUD operations for flags
-- [ ] Admin token authentication
+### 5.1 Admin Service ✅
+- ✅ CRUD operations for trait definitions
+- ✅ CRUD operations for segment definitions  
+- ✅ CRUD operations for flags
+- ✅ Admin token authentication
+- ✅ Expression validation API
+- ✅ User search and detail APIs
+- ✅ System metrics and monitoring
 
 **API Endpoints:**
 ```typescript
 GET/POST/PUT/DELETE /v1/admin/traits
 GET/POST/PUT/DELETE /v1/admin/segments
 GET/POST/PUT/DELETE /v1/admin/flags
+POST /v1/admin/validate - Expression validation
+GET /v1/admin/users/search - User search
+GET /v1/admin/users/:id - User detail
+GET /v1/admin/metrics - System metrics
 ```
 
-### 5.2 Export Service
-- [ ] CSV export for segments
-- [ ] Object storage integration
-- [ ] `GET /v1/export/segment/:key.csv`
+### 5.2 Export Service ✅
+- ✅ CSV export for segments
+- ✅ Object storage integration
+- ✅ `GET /v1/export/segment/:key.csv`
+- ✅ Export file listing with download URLs
 
-### 5.3 Monitoring & Debugging
-- [ ] User detail API (events, traits, segments)
-- [ ] System health endpoints
-- [ ] Basic metrics collection
+### 5.3 Monitoring & Debugging ✅
+- ✅ User detail API (events, traits, segments)
+- ✅ System health endpoints
+- ✅ Comprehensive metrics collection
+- ✅ User search functionality
 
 **Deliverables:**
 - Complete admin API
 - CSV export functionality
 - User debugging tools
+- System monitoring dashboard data
 
 ---
 
@@ -423,7 +433,8 @@ export function initTinyCDP(opts: {
 - ✅ Complete trait computation with rolling windows
 - ✅ Segment evaluation with boolean logic
 - ✅ Real-time decision API
-- [ ] CSV export functionality
+- ✅ CSV export functionality
+- ✅ Complete admin API with monitoring
 - [ ] Working web console
 - [ ] Production-ready SDK
 
