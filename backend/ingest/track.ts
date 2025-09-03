@@ -4,6 +4,7 @@ import { createLogger } from "../shared/logger";
 import { ServiceError, handleServiceError } from "../shared/errors";
 import { requireAuth, type AuthParams } from "../shared/auth";
 import { identity } from "~encore/clients";
+import { traits } from "~encore/clients";
 
 const logger = createLogger("ingest");
 
@@ -104,7 +105,18 @@ export const track = api<TrackParams, TrackResponse>(
         timestamp: eventTimestamp
       });
 
-      // TODO: In Phase 3, we'll trigger trait computation here
+      // Trigger trait computation for this user
+      try {
+        logger.debug("Triggering trait computation", { userId });
+        await traits.compute({ userId });
+        logger.info("Trait computation triggered", { userId });
+      } catch (error) {
+        // Log error but don't fail the whole request
+        logger.error("Failed to trigger trait computation", error instanceof Error ? error : new Error(String(error)), {
+          userId,
+          eventId: eventResult.id
+        });
+      }
 
       return {
         success: true,
