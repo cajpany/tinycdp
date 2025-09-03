@@ -2,6 +2,7 @@ import { api } from "encore.dev/api";
 import { createLogger } from "../shared/logger";
 import { ServiceError, handleServiceError } from "../shared/errors";
 import { traitComputer } from "../shared/trait-computation";
+import { segments } from "~encore/clients";
 
 const logger = createLogger("traits");
 
@@ -36,6 +37,18 @@ export const compute = api<ComputeTraitsParams, ComputeTraitsResponse>(
         userId: params.userId,
         traitsComputed: traits.length
       });
+
+      // Trigger segment computation for this user
+      try {
+        logger.debug("Triggering segment computation", { userId: params.userId });
+        await segments.compute({ userId: params.userId });
+        logger.info("Segment computation triggered", { userId: params.userId });
+      } catch (error) {
+        // Log error but don't fail the whole request
+        logger.error("Failed to trigger segment computation", error instanceof Error ? error : new Error(String(error)), {
+          userId: params.userId
+        });
+      }
 
       return {
         success: true,
