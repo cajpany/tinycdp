@@ -8,5 +8,6 @@ describe('Ingest Health Check', () => {
     expect(response.status).toBe('ok');
     expect(response.service).toBe('ingest');
     expect(response.timestamp).toBeInstanceOf(Date);
+    expect(response.database).toBeDefined();
   });
 });
