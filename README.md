@@ -37,7 +37,7 @@ The API will be available at `http://localhost:4000`
 
 ```
 /backend/
-├── shared/           # Shared database, types, and utilities
+├── shared/           # Shared database, types, utilities, and logging
 ├── ingest/          # Event ingestion service
 ├── identity/        # User and identity management
 ├── traits/          # Trait computation engine
@@ -51,7 +51,7 @@ The API will be available at `http://localhost:4000`
 
 ### Health Checks
 
-All services provide health check endpoints:
+All services provide comprehensive health check endpoints with detailed logging:
 
 - `GET /ingest/health`
 - `GET /identity/health`
@@ -60,6 +60,30 @@ All services provide health check endpoints:
 - `GET /decide/health`
 - `GET /admin/health`
 - `GET /export/health`
+
+Each health check includes:
+- Service status
+- Database connectivity and latency
+- Storage connectivity (for export service)
+- Detailed error information
+- Performance metrics
+
+### Debugging
+
+For deployment issues, you can:
+
+1. **Check individual service health:**
+   ```bash
+   curl http://localhost:4000/ingest/health
+   ```
+
+2. **Run comprehensive health checks:**
+   ```bash
+   npx tsx scripts/health-check.ts
+   ```
+
+3. **Check service logs:**
+   The application now includes comprehensive logging with structured context for each service.
 
 ## Testing
 
@@ -82,6 +106,24 @@ This project is built in phases:
 - **Phase 7**: Web Console
 
 See [PROJECT_PLAN.md](./PROJECT_PLAN.md) for detailed development roadmap.
+
+## Troubleshooting
+
+### Deployment Issues
+
+If you encounter deployment errors:
+
+1. **Check health endpoints** - All services now provide detailed health information
+2. **Review logs** - Enhanced logging provides better error context
+3. **Run health check script** - Use `npx tsx scripts/health-check.ts` for comprehensive testing
+4. **Verify database** - Ensure migrations have run successfully
+5. **Check storage** - Verify object storage is properly configured
+
+### Common Issues
+
+- **Database connection failures**: Check PostgreSQL is running and accessible
+- **Storage errors**: Verify object storage bucket configuration
+- **Service startup**: Check for port conflicts or missing dependencies
 
 ## License
 
