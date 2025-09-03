@@ -2,5 +2,8 @@
   "name": "leap-app",
   "version": "1.0.0",
   "type": "module",
-  "packageManager": "bun"
+  "packageManager": "bun",
+  "workspaces": [
+    "backend"
+  ]
 }
