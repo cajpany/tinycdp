@@ -39,7 +39,7 @@ TinyCDP is an open-source, real-time traits & segments engine - a lightweight re
 4. **segments** - Evaluate segment rules from traits
 5. **decide** - Low-latency decision API with caching
 6. **admin** - CRUD operations for traits, segments, flags
-7. **export** - CSV export functionality
+7. **exports** - CSV export functionality
 
 ### Data Flow
 ```
@@ -308,7 +308,7 @@ GET /v1/admin/users/:id - User detail
 GET /v1/admin/metrics - System metrics
 ```
 
-### 5.2 Export Service ✅
+### 5.2 Exports Service ✅
 - ✅ CSV export for segments
 - ✅ Object storage integration
 - ✅ `GET /v1/export/segment/:key.csv`
@@ -499,7 +499,7 @@ encore run
 │   ├── segments/        # Segment evaluation
 │   ├── decide/          # Decision API
 │   ├── admin/           # Admin operations
-│   └── export/          # Data export
+│   └── exports/         # Data export
 ├── frontend/            # React console
 ├── packages/
 │   └── sdk/             # TypeScript SDK

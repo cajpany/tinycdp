@@ -3,7 +3,7 @@ import { db } from "./db";
 import { exportBucket } from "../shared/storage";
 import { createLogger } from "../shared/logger";
 
-const logger = createLogger("export");
+const logger = createLogger("exports");
 
 export interface HealthResponse {
   status: string;
@@ -25,9 +25,9 @@ export interface HealthResponse {
   };
 }
 
-// Health check endpoint for the export service.
+// Health check endpoint for the exports service.
 export const health = api<void, HealthResponse>(
-  { expose: true, method: "GET", path: "/export/health" },
+  { expose: true, method: "GET", path: "/exports/health" },
   async () => {
     logger.info("Health check started");
     const startTime = Date.now();
@@ -118,7 +118,7 @@ export const health = api<void, HealthResponse>(
 
     const response = {
       status: overallStatus,
-      service: "export",
+      service: "exports",
       timestamp: new Date(),
       database: dbStatus,
       storage: storageStatus,

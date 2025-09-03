@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/components/ui/use-toast';
-import { getBackendClient, getExportService, handleApiError } from '@/lib/api';
+import { getBackendClient, handleApiError } from '@/lib/api';
 import { Plus, Edit, Trash2, Play, AlertCircle, CheckCircle, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -31,7 +31,6 @@ export function Segments() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const backend = getBackendClient();
-  const exportService = getExportService();
 
   const { data: segments, isLoading } = useQuery({
     queryKey: ['segments'],
@@ -110,7 +109,7 @@ export function Segments() {
 
   const exportSegment = useMutation({
     mutationFn: async (key: string) => {
-      return await exportService.exportSegment({ key });
+      return await backend.exports.exportSegment({ key });
     },
     onSuccess: (data) => {
       window.open(data.downloadUrl, '_blank');

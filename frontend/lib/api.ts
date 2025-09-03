@@ -18,12 +18,6 @@ export function getBackendClient() {
   });
 }
 
-// Helper to access the export service (since 'export' is a reserved keyword)
-export function getExportService() {
-  const client = getBackendClient();
-  return client['export'];
-}
-
 // API key management
 export const apiKeyManager = {
   get: getApiKey,

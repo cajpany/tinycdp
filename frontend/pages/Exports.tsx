@@ -5,20 +5,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
-import { getBackendClient, getExportService, handleApiError } from '@/lib/api';
+import { getBackendClient, handleApiError } from '@/lib/api';
 import { Download, FileText, Calendar, HardDrive, ExternalLink } from 'lucide-react';
 
 export function Exports() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const backend = getBackendClient();
-  const exportService = getExportService();
 
   const { data: exports, isLoading } = useQuery({
     queryKey: ['exports'],
     queryFn: async () => {
       try {
-        return await exportService.listExports();
+        return await backend.exports.listExports();
       } catch (error) {
         handleApiError(error);
         throw error;
@@ -40,7 +39,7 @@ export function Exports() {
 
   const exportSegment = useMutation({
     mutationFn: async (key: string) => {
-      return await exportService.exportSegment({ key });
+      return await backend.exports.exportSegment({ key });
     },
     onSuccess: (data) => {
       window.open(data.downloadUrl, '_blank');

@@ -44,7 +44,7 @@ The API will be available at `http://localhost:4000`
 ├── segments/        # Segment evaluation
 ├── decide/          # Low-latency decision API
 ├── admin/           # Admin operations
-└── export/          # Data export functionality
+└── exports/         # Data export functionality
 ```
 
 ## Core Features ✅
@@ -202,7 +202,7 @@ All services provide comprehensive health check endpoints with detailed logging:
 - `GET /segments/health`
 - `GET /decide/health`
 - `GET /admin/health`
-- `GET /export/health`
+- `GET /exports/health`
 
 Each health check includes:
 - Service status
