@@ -20,7 +20,7 @@ export interface HealthResponse {
 
 // Health check endpoint for the identity service.
 export const health = api<void, HealthResponse>(
-  { expose: true, method: "GET", path: "/health" },
+  { expose: true, method: "GET", path: "/identity/health" },
   async () => {
     logger.info("Health check started");
     const startTime = Date.now();

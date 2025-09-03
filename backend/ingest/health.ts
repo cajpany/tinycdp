@@ -1,7 +1,6 @@
 import { api } from "encore.dev/api";
 import { db } from "./db";
 import { createLogger } from "../shared/logger";
-import { handleServiceError } from "../shared/errors";
 
 const logger = createLogger("ingest");
 
@@ -21,7 +20,7 @@ export interface HealthResponse {
 
 // Health check endpoint for the ingest service.
 export const health = api<void, HealthResponse>(
-  { expose: true, method: "GET", path: "/health" },
+  { expose: true, method: "GET", path: "/ingest/health" },
   async () => {
     logger.info("Health check started");
     const startTime = Date.now();

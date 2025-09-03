@@ -27,7 +27,7 @@ export interface HealthResponse {
 
 // Health check endpoint for the export service.
 export const health = api<void, HealthResponse>(
-  { expose: true, method: "GET", path: "/health" },
+  { expose: true, method: "GET", path: "/export/health" },
   async () => {
     logger.info("Health check started");
     const startTime = Date.now();
