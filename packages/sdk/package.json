@@ -1,0 +1,56 @@
+{
+  "name": "@tinycdp/sdk",
+  "version": "1.0.0",
+  "description": "TypeScript SDK for TinyCDP - Real-time traits & segments engine",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "cdp",
+    "customer-data-platform",
+    "analytics",
+    "typescript",
+    "sdk",
+    "real-time",
+    "traits",
+    "segments"
+  ],
+  "author": "TinyCDP Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "rollup": "^4.0.0",
+    "rollup-plugin-dts": "^6.0.0",
+    "tslib": "^2.6.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {},
+  "peerDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tinycdp/tinycdp.git",
+    "directory": "packages/sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/tinycdp/tinycdp/issues"
+  },
+  "homepage": "https://github.com/tinycdp/tinycdp#readme"
+}

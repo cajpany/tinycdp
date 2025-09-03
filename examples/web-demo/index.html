@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TinyCDP Demo - E-commerce Store</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <div id="app" class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <header class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-900">TinyCDP Demo Store</h1>
+        <div class="flex items-center space-x-4">
+          <div id="user-info" class="text-sm text-gray-600">
+            Not identified
+          </div>
+          <button id="identify-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Identify User
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- SDK Status -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h2 class="text-xl font-semibold mb-4">SDK Status</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-gray-50 p-4 rounded">
+          <div class="text-sm text-gray-600">Queue Size</div>
+          <div id="queue-size" class="text-2xl font-bold">0</div>
+        </div>
+        <div class="bg-gray-50 p-4 rounded">
+          <div class="text-sm text-gray-600">Events Sent</div>
+          <div id="events-sent" class="text-2xl font-bold">0</div>
+        </div>
+        <div class="bg-gray-50 p-4 rounded">
+          <div class="text-sm text-gray-600">Decisions Made</div>
+          <div id="decisions-made" class="text-2xl font-bold">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Flags -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h2 class="text-xl font-semibold mb-4">Feature Flags</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="border border-gray-200 p-4 rounded">
+          <h3 class="font-medium mb-2">Premium Features</h3>
+          <div id="premium-status" class="text-sm text-gray-500">Checking...</div>
+          <button id="check-premium" class="mt-2 bg-purple-500 text-white px-3 py-1 rounded text-sm hover:bg-purple-600">
+            Check Access
+          </button>
+        </div>
+        <div class="border border-gray-200 p-4 rounded">
+          <h3 class="font-medium mb-2">Discount Offer</h3>
+          <div id="discount-status" class="text-sm text-gray-500">Checking...</div>
+          <button id="check-discount" class="mt-2 bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
+            Check Offer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+      <h2 class="text-xl font-semibold mb-4">Products</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Basic Plan -->
+        <div class="border border-gray-200 rounded-lg p-6">
+          <h3 class="text-lg font-medium mb-2">Basic Plan</h3>
+          <p class="text-gray-600 mb-4">Essential features for getting started</p>
+          <div class="text-2xl font-bold mb-4">$19/month</div>
+          <button class="purchase-btn w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600" 
+                  data-product="basic-plan" data-amount="19">
+            Purchase Basic
+          </button>
+        </div>
+
+        <!-- Premium Plan -->
+        <div class="border border-gray-200 rounded-lg p-6 relative">
+          <div id="premium-badge" class="hidden absolute -top-2 -right-2 bg-purple-500 text-white px-2 py-1 rounded text-xs">
+            Premium Features Available!
+          </div>
+          <h3 class="text-lg font-medium mb-2">Premium Plan</h3>
+          <p class="text-gray-600 mb-4">Advanced features for power users</p>
+          <div class="text-2xl font-bold mb-4">
+            <span id="premium-price">$49/month</span>
+            <span id="premium-discount" class="hidden text-lg text-green-600 ml-2">20% OFF!</span>
+          </div>
+          <button class="purchase-btn w-full bg-purple-500 text-white py-2 rounded hover:bg-purple-600" 
+                  data-product="premium-plan" data-amount="49">
+            Purchase Premium
+          </button>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="border border-gray-200 rounded-lg p-6">
+          <h3 class="text-lg font-medium mb-2">Enterprise Plan</h3>
+          <p class="text-gray-600 mb-4">Complete solution for large teams</p>
+          <div class="text-2xl font-bold mb-4">$99/month</div>
+          <button class="purchase-btn w-full bg-gray-800 text-white py-2 rounded hover:bg-gray-900" 
+                  data-product="enterprise-plan" data-amount="99">
+            Purchase Enterprise
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <h2 class="text-xl font-semibold mb-4">Event Log</h2>
+      <div id="event-log" class="space-y-2 max-h-96 overflow-y-auto">
+        <div class="text-gray-500 text-sm">Events will appear here...</div>
+      </div>
+      <div class="mt-4 flex space-x-2">
+        <button id="flush-btn" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+          Flush Events
+        </button>
+        <button id="clear-log" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+          Clear Log
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TinyCDP SDK -->
+  <script type="module">
+    import { initTinyCDP } from '../sdk/dist/index.esm.js';
+
+    // Configuration - Update these to match your TinyCDP instance
+    const TINYCDP_CONFIG = {
+      endpoint: 'http://localhost:4000',
+      writeKey: 'demo-write-key', // Replace with actual key
+      readKey: 'demo-read-key',   // Replace with actual key
+      debug: true,
+      flushAt: 3, // Small batch for demo
+      flushIntervalMs: 5000, // 5 seconds
+    };
+
+    // Initialize TinyCDP
+    let tinycdp;
+    try {
+      tinycdp = initTinyCDP(TINYCDP_CONFIG);
+      logEvent('SDK initialized successfully', 'success');
+    } catch (error) {
+      logEvent(`SDK initialization failed: ${error.message}`, 'error');
+    }
+
+    // State
+    let currentUser = null;
+    let eventsSent = 0;
+    let decisionsMade = 0;
+
+    // DOM elements
+    const userInfo = document.getElementById('user-info');
+    const identifyBtn = document.getElementById('identify-btn');
+    const queueSizeEl = document.getElementById('queue-size');
+    const eventsSentEl = document.getElementById('events-sent');
+    const decisionsMadeEl = document.getElementById('decisions-made');
+    const premiumStatus = document.getElementById('premium-status');
+    const discountStatus = document.getElementById('discount-status');
+    const premiumBadge = document.getElementById('premium-badge');
+    const premiumPrice = document.getElementById('premium-price');
+    const premiumDiscount = document.getElementById('premium-discount');
+    const eventLog = document.getElementById('event-log');
+
+    // Utility functions
+    function logEvent(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const className = type === 'error' ? 'text-red-600' : 
+                       type === 'success' ? 'text-green-600' : 
+                       type === 'warning' ? 'text-orange-600' : 'text-gray-600';
+      
+      const logEntry = document.createElement('div');
+      logEntry.className = `text-sm ${className} font-mono`;
+      logEntry.textContent = `[${timestamp}] ${message}`;
+      
+      eventLog.insertBefore(logEntry, eventLog.firstChild);
+      
+      // Keep only last 50 entries
+      while (eventLog.children.length > 50) {
+        eventLog.removeChild(eventLog.lastChild);
+      }
+    }
+
+    function updateStats() {
+      if (tinycdp) {
+        queueSizeEl.textContent = tinycdp.getQueueSize();
+      }
+      eventsSentEl.textContent = eventsSent;
+      decisionsMadeEl.textContent = decisionsMade;
+    }
+
+    function generateUserId() {
+      return 'demo-user-' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // Event handlers
+    identifyBtn.addEventListener('click', async () => {
+      if (!tinycdp) {
+        logEvent('SDK not initialized', 'error');
+        return;
+      }
+
+      try {
+        currentUser = generateUserId();
+        
+        await tinycdp.identify({
+          userId: currentUser,
+          traits: {
+            email: `${currentUser}@example.com`,
+            plan: 'basic',
+            joinedAt: new Date().toISOString(),
+            source: 'demo',
+          },
+        });
+
+        userInfo.textContent = `User: ${currentUser}`;
+        identifyBtn.textContent = 'New User';
+        logEvent(`User identified: ${currentUser}`, 'success');
+
+        // Track page view
+        tinycdp.track({
+          userId: currentUser,
+          event: 'page_view',
+          properties: {
+            page: 'demo-store',
+            url: window.location.href,
+          },
+        });
+
+        logEvent('Tracked page_view event');
+        updateStats();
+
+      } catch (error) {
+        logEvent(`Identify failed: ${error.message}`, 'error');
+      }
+    });
+
+    // Purchase button handlers
+    document.querySelectorAll('.purchase-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        if (!tinycdp || !currentUser) {
+          logEvent('Please identify a user first', 'warning');
+          return;
+        }
+
+        const product = e.target.dataset.product;
+        const amount = parseFloat(e.target.dataset.amount);
+
+        try {
+          tinycdp.track({
+            userId: currentUser,
+            event: 'purchase',
+            properties: {
+              product,
+              amount,
+              currency: 'USD',
+              timestamp: new Date().toISOString(),
+            },
+          });
+
+          eventsSent++;
+          logEvent(`Tracked purchase: ${product} ($${amount})`, 'success');
+          updateStats();
+
+          // Show success message
+          const originalText = e.target.textContent;
+          e.target.textContent = 'Purchased!';
+          e.target.disabled = true;
+          setTimeout(() => {
+            e.target.textContent = originalText;
+            e.target.disabled = false;
+          }, 2000);
+
+        } catch (error) {
+          logEvent(`Purchase tracking failed: ${error.message}`, 'error');
+        }
+      });
+    });
+
+    // Feature flag check handlers
+    document.getElementById('check-premium').addEventListener('click', async () => {
+      if (!tinycdp || !currentUser) {
+        premiumStatus.textContent = 'Please identify a user first';
+        return;
+      }
+
+      try {
+        const decision = await tinycdp.decide({
+          userId: currentUser,
+          flag: 'premium_features',
+        });
+
+        decisionsMade++;
+        
+        if (decision.allow) {
+          premiumStatus.textContent = 'Premium features enabled!';
+          premiumStatus.className = 'text-sm text-green-600';
+          premiumBadge.classList.remove('hidden');
+        } else {
+          premiumStatus.textContent = 'Premium features not available';
+          premiumStatus.className = 'text-sm text-gray-500';
+          premiumBadge.classList.add('hidden');
+        }
+
+        logEvent(`Premium decision: ${decision.allow} (${decision.reasons.join(', ')})`, 'success');
+        updateStats();
+
+      } catch (error) {
+        premiumStatus.textContent = `Decision failed: ${error.message}`;
+        premiumStatus.className = 'text-sm text-red-600';
+        logEvent(`Premium decision failed: ${error.message}`, 'error');
+      }
+    });
+
+    document.getElementById('check-discount').addEventListener('click', async () => {
+      if (!tinycdp || !currentUser) {
+        discountStatus.textContent = 'Please identify a user first';
+        return;
+      }
+
+      try {
+        const decision = await tinycdp.decide({
+          userId: currentUser,
+          flag: 'discount_offer',
+        });
+
+        decisionsMade++;
+
+        if (decision.allow) {
+          discountStatus.textContent = '20% discount available!';
+          discountStatus.className = 'text-sm text-green-600';
+          premiumDiscount.classList.remove('hidden');
+        } else {
+          discountStatus.textContent = 'No discount available';
+          discountStatus.className = 'text-sm text-gray-500';
+          premiumDiscount.classList.add('hidden');
+        }
+
+        logEvent(`Discount decision: ${decision.allow} (${decision.reasons.join(', ')})`, 'success');
+        updateStats();
+
+      } catch (error) {
+        discountStatus.textContent = `Decision failed: ${error.message}`;
+        discountStatus.className = 'text-sm text-red-600';
+        logEvent(`Discount decision failed: ${error.message}`, 'error');
+      }
+    });
+
+    // Utility button handlers
+    document.getElementById('flush-btn').addEventListener('click', async () => {
+      if (!tinycdp) {
+        logEvent('SDK not initialized', 'error');
+        return;
+      }
+
+      try {
+        const queueSize = tinycdp.getQueueSize();
+        await tinycdp.flush();
+        eventsSent += queueSize;
+        logEvent(`Flushed ${queueSize} events`, 'success');
+        updateStats();
+      } catch (error) {
+        logEvent(`Flush failed: ${error.message}`, 'error');
+      }
+    });
+
+    document.getElementById('clear-log').addEventListener('click', () => {
+      eventLog.innerHTML = '<div class="text-gray-500 text-sm">Events will appear here...</div>';
+    });
+
+    // Auto-update stats
+    setInterval(updateStats, 1000);
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+      if (tinycdp) {
+        tinycdp.destroy();
+      }
+    });
+
+    // Initial stats update
+    updateStats();
+
+    // Welcome message
+    logEvent('TinyCDP Demo Store loaded. Click "Identify User" to start!');
+  </script>
+</body>
+</html>
