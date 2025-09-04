@@ -33,7 +33,7 @@ export const searchUsers = api<SearchUsersParams, SearchUsersResponse>(
   { expose: true, method: "GET", path: "/v1/admin/users/search" },
   async (params) => {
     try {
-      await requireAuth('read', params.authorization);
+      await requireAuth('read', params);
 
       const query = params.query || '';
       const limit = Math.min(params.limit || 50, 100); // Max 100 results

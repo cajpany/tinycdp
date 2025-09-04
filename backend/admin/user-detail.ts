@@ -59,7 +59,7 @@ export const getUserDetail = api<GetUserDetailParams, GetUserDetailResponse>(
   { expose: true, method: "GET", path: "/v1/admin/users/:userId" },
   async (params) => {
     try {
-      await requireAuth('read', params.authorization);
+      await requireAuth('read', params);
 
       logger.info("Getting user detail", { userId: params.userId });
 

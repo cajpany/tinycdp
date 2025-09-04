@@ -35,7 +35,7 @@ export const decide = api<DecideParams, DecideResponse>(
   async (params) => {
     try {
       // Require read permission
-      await requireAuth('read', params.authorization);
+      await requireAuth('read', params);
 
       const userId = params.userId;
       const flagKey = params.flag;

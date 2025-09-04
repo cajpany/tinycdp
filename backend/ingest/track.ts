@@ -28,7 +28,7 @@ export const track = api<TrackParams, TrackResponse>(
   async (params) => {
     try {
       // Require write permission
-      await requireAuth('write', params.authorization);
+      await requireAuth('write', params);
 
       logger.info("Processing track request", {
         event: params.event,

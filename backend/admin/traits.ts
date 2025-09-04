@@ -41,7 +41,7 @@ export const createTrait = api<CreateTraitParams, CreateTraitResponse>(
   { expose: true, method: "POST", path: "/v1/admin/traits" },
   async (params) => {
     try {
-      await requireAuth('admin', params.authorization);
+      await requireAuth('admin', params);
 
       logger.info("Creating trait definition", { key: params.key });
 
@@ -126,7 +126,7 @@ export const listTraits = api<AuthParams, ListTraitsResponse>(
   { expose: true, method: "GET", path: "/v1/admin/traits" },
   async (params) => {
     try {
-      await requireAuth('read', params.authorization);
+      await requireAuth('read', params);
 
       logger.info("Listing trait definitions");
 
@@ -153,7 +153,7 @@ export const updateTrait = api<UpdateTraitParams, CreateTraitResponse>(
   { expose: true, method: "PUT", path: "/v1/admin/traits/:key" },
   async (params) => {
     try {
-      await requireAuth('admin', params.authorization);
+      await requireAuth('admin', params);
 
       logger.info("Updating trait definition", { key: params.key });
 
@@ -209,7 +209,7 @@ export const deleteTrait = api<DeleteTraitParams, void>(
   { expose: true, method: "DELETE", path: "/v1/admin/traits/:key" },
   async (params) => {
     try {
-      await requireAuth('admin', params.authorization);
+      await requireAuth('admin', params);
 
       logger.info("Deleting trait definition", { key: params.key });
 

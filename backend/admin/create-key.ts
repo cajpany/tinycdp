@@ -22,7 +22,7 @@ export const createKey = api<CreateKeyParams, CreateKeyResponse>(
   async (params) => {
     try {
       // Require admin permission to create API keys
-      await requireAuth('admin', params.authorization);
+      await requireAuth('admin', params);
 
       logger.info("Creating new API key", { kind: params.kind });
 

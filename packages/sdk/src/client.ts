@@ -45,6 +45,10 @@ export class TinyCDPClientImpl implements TinyCDPClient {
   private destroyed = false;
 
   constructor(options: TinyCDPOptions) {
+    if (!options.endpoint) {
+      throw new Error('TinyCDP: endpoint is required');
+    }
+
     this.options = {
       ...DEFAULT_OPTIONS,
       ...options,
@@ -89,14 +93,12 @@ export class TinyCDPClientImpl implements TinyCDPClient {
     // Check if we're in a browser environment
     if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
       const flushOnUnload = () => {
-        // Use sendBeacon if available, otherwise synchronous flush
         if (this.eventQueue.size() > 0) {
           this.logger.debug('Page unload detected, flushing events');
           
           if (navigator.sendBeacon && this.options.writeKey) {
             this.flushWithBeacon();
           } else {
-            // Synchronous flush as fallback (not recommended but better than losing data)
             this.flushSync();
           }
         }
@@ -105,7 +107,6 @@ export class TinyCDPClientImpl implements TinyCDPClient {
       window.addEventListener('beforeunload', flushOnUnload);
       window.addEventListener('pagehide', flushOnUnload);
       
-      // For mobile browsers
       if ('visibilitychange' in document) {
         document.addEventListener('visibilitychange', () => {
           if (document.visibilityState === 'hidden') {
@@ -124,19 +125,18 @@ export class TinyCDPClientImpl implements TinyCDPClient {
       return;
     }
 
-    const events = this.getAllQueuedEvents();
+    if (!this.options.writeKey) {
+      this.logger.warn('writeKey is required to flush events with sendBeacon');
+      return;
+    }
+
+    const events = this.eventQueue.drain();
     if (events.length === 0) {
       return;
     }
 
-    const url = `${this.options.endpoint}/v1/track`;
-    const headers = { 'Content-Type': 'application/json' };
+    const url = `${this.options.endpoint}/v1/track?apiKey=${encodeURIComponent(this.options.writeKey)}`;
     
-    if (this.options.writeKey) {
-      headers['Authorization'] = `Bearer ${this.options.writeKey}`;
-    }
-
-    // Send each event individually with sendBeacon
     events.forEach(event => {
       const payload = JSON.stringify({
         userId: event.userId,
@@ -147,21 +147,24 @@ export class TinyCDPClientImpl implements TinyCDPClient {
         props: event.props,
       });
 
-      navigator.sendBeacon(url, payload);
+      try {
+        if (!navigator.sendBeacon(url, payload)) {
+          this.logger.warn('sendBeacon returned false, event may not have been sent', { event: event.event });
+        }
+      } catch (error) {
+        this.logger.error('sendBeacon threw an error', { error: error instanceof Error ? error.message : String(error) });
+      }
     });
 
-    this.eventQueue.clear();
-    this.logger.debug('Events flushed with sendBeacon', { count: events.length });
+    this.logger.debug('Attempted to flush events with sendBeacon', { count: events.length });
   }
 
   /**
    * Synchronous flush (blocking, not recommended)
    */
   private flushSync(): void {
-    // This is a fallback and should be avoided if possible
-    // Modern browsers may kill the request before it completes
     try {
-      const events = this.getAllQueuedEvents();
+      const events = this.eventQueue.drain();
       if (events.length === 0) {
         return;
       }
@@ -187,25 +190,12 @@ export class TinyCDPClientImpl implements TinyCDPClient {
         xhr.send(payload);
       });
 
-      this.eventQueue.clear();
       this.logger.debug('Events flushed synchronously', { count: events.length });
     } catch (error) {
       this.logger.error('Synchronous flush failed', {
         error: error instanceof Error ? error.message : String(error)
       });
     }
-  }
-
-  /**
-   * Get all queued events
-   */
-  private getAllQueuedEvents(): TrackEvent[] {
-    const events: TrackEvent[] = [];
-    const originalSize = this.eventQueue.size();
-    
-    // This is a bit hacky - we'd need to expose the events array from EventQueue
-    // For now, we'll implement a simple approach
-    return events;
   }
 
   /**
@@ -241,7 +231,8 @@ export class TinyCDPClientImpl implements TinyCDPClient {
     this.assertNotDestroyed();
 
     if (!this.options.writeKey) {
-      throw new Error('Write key is required for track calls');
+      this.logger.warn('writeKey is required for track calls, event dropped');
+      return;
     }
 
     if (!params.event || params.event.trim() === '') {
@@ -265,7 +256,6 @@ export class TinyCDPClientImpl implements TinyCDPClient {
 
     this.eventQueue.add(event);
 
-    // Auto-flush if we've reached the batch size
     if (this.eventQueue.size() >= this.options.flushAt) {
       this.flush().catch(error => {
         this.logger.error('Auto-flush failed', {
@@ -355,7 +345,6 @@ export class TinyCDPClientImpl implements TinyCDPClient {
 
     this.logger.debug('Destroying TinyCDP client');
     
-    // Flush any remaining events
     this.flush().catch(error => {
       this.logger.error('Final flush failed during destroy', {
         error: error instanceof Error ? error.message : String(error)
@@ -376,9 +365,6 @@ export class TinyCDPClientImpl implements TinyCDPClient {
       return;
     }
 
-    // Send events individually to match the API format
-    // In a production implementation, you might want to batch these into a single request
-    // if the API supports it
     const promises = events.map(event =>
       this.retry.execute(async () => {
         await this.http.post('/v1/track', {

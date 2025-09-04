@@ -52,6 +52,18 @@ export class EventQueue {
   }
 
   /**
+   * Drains all events from the queue.
+   * @returns An array of all events that were in the queue.
+   */
+  drain(): TrackEvent[] {
+    const eventsToDrain = [...this.events];
+    this.events = [];
+    this.clearFlushTimer();
+    this.logger.debug('Event queue drained', { count: eventsToDrain.length });
+    return eventsToDrain;
+  }
+
+  /**
    * Flush all events immediately
    */
   async flush(): Promise<void> {
@@ -59,9 +71,7 @@ export class EventQueue {
       return;
     }
 
-    const eventsToFlush = [...this.events];
-    this.events = [];
-    this.clearFlushTimer();
+    const eventsToFlush = this.drain();
 
     this.logger.debug('Flushing events', { count: eventsToFlush.length });
 

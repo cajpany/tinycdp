@@ -49,7 +49,7 @@ export const getSystemMetrics = api<AuthParams, GetSystemMetricsResponse>(
   { expose: true, method: "GET", path: "/v1/admin/metrics" },
   async (params) => {
     try {
-      await requireAuth('read', params.authorization);
+      await requireAuth('read', params);
 
       logger.info("Getting system metrics");
 

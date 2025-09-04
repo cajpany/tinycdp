@@ -24,7 +24,7 @@ export const identify = api<IdentifyParams, IdentifyResponse>(
   async (params) => {
     try {
       // Require write permission
-      await requireAuth('write', params.authorization);
+      await requireAuth('write', params);
 
       logger.info("Processing identify request", {
         hasDeviceId: !!params.deviceId,

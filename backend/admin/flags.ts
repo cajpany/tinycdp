@@ -38,7 +38,7 @@ export const createFlag = api<CreateFlagParams, CreateFlagResponse>(
   { expose: true, method: "POST", path: "/v1/admin/flags" },
   async (params) => {
     try {
-      await requireAuth('admin', params.authorization);
+      await requireAuth('admin', params);
 
       logger.info("Creating flag definition", { key: params.key });
 
@@ -112,7 +112,7 @@ export const listFlags = api<AuthParams, ListFlagsResponse>(
   { expose: true, method: "GET", path: "/v1/admin/flags" },
   async (params) => {
     try {
-      await requireAuth('read', params.authorization);
+      await requireAuth('read', params);
 
       logger.info("Listing flag definitions");
 
@@ -139,7 +139,7 @@ export const updateFlag = api<UpdateFlagParams, CreateFlagResponse>(
   { expose: true, method: "PUT", path: "/v1/admin/flags/:key" },
   async (params) => {
     try {
-      await requireAuth('admin', params.authorization);
+      await requireAuth('admin', params);
 
       logger.info("Updating flag definition", { key: params.key });
 
@@ -184,7 +184,7 @@ export const deleteFlag = api<DeleteFlagParams, void>(
   { expose: true, method: "DELETE", path: "/v1/admin/flags/:key" },
   async (params) => {
     try {
-      await requireAuth('admin', params.authorization);
+      await requireAuth('admin', params);
 
       logger.info("Deleting flag definition", { key: params.key });
 

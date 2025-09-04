@@ -22,7 +22,7 @@ export const exportSegment = api<ExportSegmentParams, ExportSegmentResponse>(
   { expose: true, method: "GET", path: "/v1/export/segment/:key" },
   async (params) => {
     try {
-      await requireAuth('read', params.authorization);
+      await requireAuth('read', params);
 
       logger.info("Exporting segment to CSV", { segmentKey: params.key });
 

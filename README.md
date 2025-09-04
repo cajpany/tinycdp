@@ -49,7 +49,7 @@ The API will be available at `http://localhost:4000`
 
 ## Core Features ✅
 
-### Phase 1-5 Complete!
+### Phase 1-6 Complete!
 
 **✅ Event Ingestion**: Track user events and manage identities
 - `POST /v1/identify` - Create/update user profiles
@@ -81,6 +81,12 @@ The API will be available at `http://localhost:4000`
 - `GET /v1/export/segment/:key` - Export segment users to CSV
 - `GET /v1/export/list` - List available exports
 - Secure signed download URLs
+
+**✅ TypeScript SDK**: Production-ready SDK
+- Browser and Node.js support
+- Event batching with configurable flush
+- Automatic retries and error handling
+- Offline queueing support
 
 ## API Examples
 
@@ -254,59 +260,16 @@ This project is built in phases:
 - **Phase 3**: Traits Engine ✅
 - **Phase 4**: Segments & Decision Engine ✅
 - **Phase 5**: Admin API & Management ✅
-- **Phase 6**: TypeScript SDK
+- **Phase 6**: TypeScript SDK ✅
 - **Phase 7**: Web Console
 
 See [PROJECT_PLAN.md](./PROJECT_PLAN.md) for detailed development roadmap.
 
-## Phase 5 New Features
-
-### Admin & Management APIs ✅
-
-**User Management:**
-- `GET /v1/admin/users/search` - Search users by alias or ID
-- `GET /v1/admin/users/:id` - Get detailed user information
-- Comprehensive user debugging with events, traits, segments
-
-**System Monitoring:**
-- `GET /v1/admin/metrics` - System-wide metrics and statistics
-- User activity metrics (daily, weekly, monthly)
-- Event statistics and top event types
-- Trait and segment usage statistics
-- Database table sizes and health
-
-**Expression Validation:**
-- `POST /v1/admin/validate` - Validate trait/segment/flag expressions
-- Supports trait DSL, segment rules, and flag rules
-- Detailed error reporting for invalid expressions
-
-### CSV Export System ✅
-
-**Segment Export:**
-- `GET /v1/export/segment/:key` - Export segment users to CSV format
-- Includes user IDs, aliases, membership details
-- Secure signed download URLs
-
-**Export Management:**
-- `GET /v1/export/list` - List all available export files
-- Automatic file naming with timestamps
-- Built-in object storage integration
-
-## Performance
-
-Current system delivers on performance targets:
-
-- **Decision API**: Sub-150ms p95 response times with caching
-- **Real-time Pipeline**: Event → Trait → Segment → Decision in under 5 seconds
-- **Scalability**: Handles 1000+ events/minute per user
-- **Caching**: 60-second TTL with automatic invalidation
-
 ## What's Next?
 
-With Phase 5 complete, we now have a comprehensive CDP with full admin capabilities!
+With Phase 6 complete, we now have a production-ready SDK!
 
 **Immediate next steps:**
-- Phase 6: TypeScript SDK for easy integration
 - Phase 7: Web console for visual management
 
 **Ready for production use:**
@@ -317,6 +280,7 @@ With Phase 5 complete, we now have a comprehensive CDP with full admin capabilit
 - ✅ Complete admin APIs
 - ✅ CSV export functionality
 - ✅ User debugging and monitoring
+- ✅ Production-ready SDK
 
 ## Troubleshooting
 

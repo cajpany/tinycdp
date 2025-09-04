@@ -22,7 +22,7 @@ export const listExports = api<AuthParams, ListExportsResponse>(
   { expose: true, method: "GET", path: "/v1/export/list" },
   async (params) => {
     try {
-      await requireAuth('read', params.authorization);
+      await requireAuth('read', params);
 
       logger.info("Listing export files");
 

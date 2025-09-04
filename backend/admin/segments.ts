@@ -40,7 +40,7 @@ export const createSegment = api<CreateSegmentParams, CreateSegmentResponse>(
   { expose: true, method: "POST", path: "/v1/admin/segments" },
   async (params) => {
     try {
-      await requireAuth('admin', params.authorization);
+      await requireAuth('admin', params);
 
       logger.info("Creating segment definition", { key: params.key });
 
@@ -115,7 +115,7 @@ export const listSegments = api<AuthParams, ListSegmentsResponse>(
   { expose: true, method: "GET", path: "/v1/admin/segments" },
   async (params) => {
     try {
-      await requireAuth('read', params.authorization);
+      await requireAuth('read', params);
 
       logger.info("Listing segment definitions");
 
@@ -142,7 +142,7 @@ export const updateSegment = api<UpdateSegmentParams, CreateSegmentResponse>(
   { expose: true, method: "PUT", path: "/v1/admin/segments/:key" },
   async (params) => {
     try {
-      await requireAuth('admin', params.authorization);
+      await requireAuth('admin', params);
 
       logger.info("Updating segment definition", { key: params.key });
 
@@ -188,7 +188,7 @@ export const deleteSegment = api<DeleteSegmentParams, void>(
   { expose: true, method: "DELETE", path: "/v1/admin/segments/:key" },
   async (params) => {
     try {
-      await requireAuth('admin', params.authorization);
+      await requireAuth('admin', params);
 
       logger.info("Deleting segment definition", { key: params.key });
 

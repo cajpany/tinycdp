@@ -22,7 +22,7 @@ export const validateExpression = api<ValidateExpressionParams, ValidateExpressi
   { expose: true, method: "POST", path: "/v1/admin/validate" },
   async (params) => {
     try {
-      await requireAuth('read', params.authorization);
+      await requireAuth('read', params);
 
       logger.info("Validating expression", { 
         type: params.type,

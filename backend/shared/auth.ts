@@ -1,4 +1,4 @@
-import { Header, APIError } from "encore.dev/api";
+import { Header, APIError, Query } from "encore.dev/api";
 import { createHash } from "crypto";
 import { db } from "./db";
 import { createLogger } from "./logger";
@@ -12,6 +12,7 @@ export interface AuthContext {
 
 export interface AuthParams {
   authorization?: Header<"Authorization">;
+  apiKey?: Query<string>;
 }
 
 // Hash an API key for storage
@@ -30,19 +31,12 @@ export function generateAPIKey(): string {
 }
 
 // Validate API key and return auth context
-export async function validateAPIKey(authHeader?: string): Promise<AuthContext | null> {
-  if (!authHeader) {
+export async function validateAPIKey(params: AuthParams): Promise<AuthContext | null> {
+  const key = params.authorization?.replace('Bearer ', '') ?? params.apiKey;
+  if (!key) {
     return null;
   }
 
-  // Extract key from "Bearer <key>" format
-  const matches = authHeader.match(/^Bearer\s+(.+)$/);
-  if (!matches) {
-    logger.warn("Invalid authorization header format");
-    return null;
-  }
-
-  const key = matches[1];
   const keyHash = hashAPIKey(key);
 
   try {
@@ -67,10 +61,10 @@ export async function validateAPIKey(authHeader?: string): Promise<AuthContext |
 }
 
 // Require specific permission level
-export function requireAuth(requiredKind: 'write' | 'read' | 'admin', authHeader?: string): Promise<AuthContext> {
+export function requireAuth(requiredKind: 'write' | 'read' | 'admin', params: AuthParams): Promise<AuthContext> {
   return new Promise(async (resolve, reject) => {
     try {
-      const auth = await validateAPIKey(authHeader);
+      const auth = await validateAPIKey(params);
       
       if (!auth) {
         reject(APIError.unauthenticated("Valid API key required"));
