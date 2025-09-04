@@ -6,11 +6,6 @@ import { createLogger } from "./logger";
 
 const logger = createLogger("auth");
 
-// Encore secrets for API keys (alternative to database storage)
-const adminAPIKey = secret("ADMIN_API_KEY");
-const writeAPIKey = secret("WRITE_API_KEY");
-const readAPIKey = secret("READ_API_KEY");
-
 export interface AuthContext {
   keyId: string;
   kind: 'write' | 'read' | 'admin';
@@ -44,6 +39,11 @@ export async function validateAPIKeyFromSecrets(params: AuthParams): Promise<Aut
   }
 
   try {
+    // Load secrets within function scope (required by Encore)
+    const adminAPIKey = secret("ADMIN_API_KEY");
+    const writeAPIKey = secret("WRITE_API_KEY");
+    const readAPIKey = secret("READ_API_KEY");
+
     // Check against secrets in order of permission level
     if (key === adminAPIKey()) {
       logger.debug("Admin API key validated from secrets");
