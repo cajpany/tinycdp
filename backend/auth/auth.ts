@@ -17,18 +17,30 @@ export async function validateWithSecrets(params: AuthParams): Promise<AuthConte
   }
 
   try {
+    // Try to load secrets - if they fail, return null to fall back to database
+    let adminKey: string, writeKey: string, readKey: string;
+    
+    try {
+      adminKey = adminAPIKey();
+      writeKey = writeAPIKey();
+      readKey = readAPIKey();
+    } catch (secretError) {
+      logger.debug("Secrets not available (likely development environment), falling back to database");
+      return null;
+    }
+
     // Check against secrets in order of permission level
-    if (key === adminAPIKey()) {
+    if (key === adminKey) {
       logger.debug("Admin API key validated from secrets");
       return { keyId: "admin-secret", kind: "admin" };
     }
     
-    if (key === writeAPIKey()) {
+    if (key === writeKey) {
       logger.debug("Write API key validated from secrets");
       return { keyId: "write-secret", kind: "write" };
     }
     
-    if (key === readAPIKey()) {
+    if (key === readKey) {
       logger.debug("Read API key validated from secrets");
       return { keyId: "read-secret", kind: "read" };
     }
