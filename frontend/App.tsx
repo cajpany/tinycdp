@@ -22,8 +22,10 @@ const queryClient = new QueryClient({
 });
 
 function AppInner() {
+  const basename = import.meta.env.PROD ? '/frontend' : '';
+  
   return (
-    <Router>
+    <Router basename={basename}>
       <Layout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
