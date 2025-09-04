@@ -322,9 +322,17 @@ function MyButton() {
 
 Comprehensive examples are available in the [`examples/`](./examples/) directory:
 
+- **[`test-sdk-example.ts`](./examples/test-sdk-example.ts)**: **Runnable test script** - validates SDK patterns against live API
+- **[`sdk-usage-patterns.ts`](./examples/sdk-usage-patterns.ts)**: Complete integration guide with real-world patterns  
 - **[`typescript-sdk-usage.ts`](./examples/typescript-sdk-usage.ts)**: Complete SDK integration examples
 - **[`react-usage.tsx`](./examples/react-usage.tsx)**: React hooks, components, and patterns
 - **[`README.md`](./examples/README.md)**: Getting started guide and best practices
+
+**Try the examples:**
+```bash
+# Run end-to-end SDK tests against staging environment
+npx tsx examples/test-sdk-example.ts
+```
 
 ### 🔧 SDK Features
 
@@ -389,6 +397,13 @@ Run the test suite:
 
 ```bash
 npm test
+```
+
+Test SDK functionality end-to-end:
+
+```bash
+# Test SDK examples against live staging environment
+npx tsx examples/test-sdk-example.ts
 ```
 
 Test Phase 4 functionality:
