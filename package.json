@@ -8,8 +8,14 @@
     "frontend"
   ],
   "scripts": {
-    "test": "cd backend && npm run test",
-    "test:watch": "cd backend && npm run test:watch",
-    "test:coverage": "cd backend && npm run test:coverage"
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "encore.dev": "^1.49.3"
   }
 }
