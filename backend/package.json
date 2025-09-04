@@ -6,8 +6,7 @@
   "scripts": {
     "build": "cd ../frontend && bun install && vite build --outDir=../backend/frontend/dist",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "encore.dev": "^1.49.3"
