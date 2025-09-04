@@ -1,5 +1,4 @@
 import { Header, APIError, Query } from "encore.dev/api";
-import { secret } from "encore.dev/config";
 import { createHash } from "crypto";
 import { db } from "./db";
 import { createLogger } from "./logger";
@@ -33,37 +32,12 @@ export function generateAPIKey(): string {
 
 // Validate API key against Encore secrets (preferred for cloud deployment)
 export async function validateAPIKeyFromSecrets(params: AuthParams): Promise<AuthContext | null> {
-  const key = params.authorization?.replace('Bearer ', '') ?? params.apiKey;
-  if (!key) {
-    return null;
-  }
-
   try {
-    // Load secrets within function scope (required by Encore)
-    const adminAPIKey = secret("ADMIN_API_KEY");
-    const writeAPIKey = secret("WRITE_API_KEY");
-    const readAPIKey = secret("READ_API_KEY");
-
-    // Check against secrets in order of permission level
-    if (key === adminAPIKey()) {
-      logger.debug("Admin API key validated from secrets");
-      return { keyId: "admin-secret", kind: "admin" };
-    }
-    
-    if (key === writeAPIKey()) {
-      logger.debug("Write API key validated from secrets");
-      return { keyId: "write-secret", kind: "write" };
-    }
-    
-    if (key === readAPIKey()) {
-      logger.debug("Read API key validated from secrets");
-      return { keyId: "read-secret", kind: "read" };
-    }
-
-    logger.warn("Invalid API key (not found in secrets)");
-    return null;
+    // Import the auth service to validate with secrets
+    const { validateWithSecrets } = await import("../auth/auth");
+    return await validateWithSecrets(params);
   } catch (error) {
-    logger.error("Failed to validate API key from secrets", error instanceof Error ? error : new Error(String(error)));
+    logger.debug("Secrets validation not available, falling back to database");
     return null;
   }
 }
