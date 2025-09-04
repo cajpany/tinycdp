@@ -18,6 +18,8 @@ Plugin: vite:esbuild
 
 **Impact**: Unable to run 70+ unit tests covering critical business logic (DSL engine, trait computation, database layer).
 
+**⚠️ CRITICAL**: We followed the [official Encore TypeScript testing documentation](https://encore.dev/docs/ts/testing) exactly, but the setup fails with esbuild errors.
+
 ## 🔄 Reproduction Steps
 
 ### Environment Setup
@@ -162,37 +164,66 @@ describe('TraitDSLLexer', () => {
 
 ## 🔧 Attempted Solutions
 
-### 1. Vitest Configuration Attempts
+### 1. ✅ **FOLLOWED ENCORE DOCUMENTATION EXACTLY**
+
+**Reference**: [Encore TypeScript Testing Documentation](https://encore.dev/docs/ts/testing)
+
+Implemented **exactly** as specified in Encore docs:
+
+#### Backend vite.config.ts
 ```typescript
-// vitest.config.ts - FAILED
-import { defineConfig } from 'vitest/config';
+/// <reference types="vitest" />
+import { defineConfig } from "vite";
+import path from "path";
+
 export default defineConfig({
+  resolve: {
+    alias: {
+      "~encore": path.resolve(__dirname, "../encore.gen"),
+    },
+  },
   test: {
-    environment: 'node',
-    globals: true,
-    testTimeout: 10000
-  }
+    fileParallelism: false, // Required for VSCode integration
+  },
 });
 ```
 
-```javascript  
-// vitest.config.js - FAILED
-import { defineConfig } from 'vitest/config';
-export default defineConfig({
-  test: {
-    globals: true,
-    environment: 'node'
+#### Package.json configuration
+```json
+{
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4",
+    "vite": "latest",
+    "@types/node": "latest"
   }
-});
+}
 ```
 
-### 2. Alternative Test Runners
+#### Commands tried (all per Encore docs)
+```bash
+# Method 1: From backend directory (as recommended)
+cd backend
+encore test
+# ❌ FAILED with same esbuild error
+
+# Method 2: Direct Vitest from backend
+npx vitest run  
+# ❌ FAILED with same esbuild error
+```
+
+**Result**: Same esbuild service crash even with official Encore setup.
+
+### 2. Alternative Test Runners Tried
 - **Jest**: Module resolution conflicts with ES modules + Encore
 - **Node.js native test**: Would require complete test rewrite
+- **Different Vitest versions**: Same esbuild issues
 
-### 3. Different Command Variations
+### 3. Configuration Variations Attempted
 ```bash
-# All failed with same esbuild error:
+# All failed with identical esbuild errors:
 npx vitest run --reporter=basic
 npx vitest run --reporter=verbose  
 npx vitest run --no-config
