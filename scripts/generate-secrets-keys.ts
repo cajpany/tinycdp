@@ -5,7 +5,15 @@
  * Run: npx tsx scripts/generate-secrets-keys.ts
  */
 
-import { generateAPIKey } from "../backend/shared/auth";
+// Generate a new API key (copied from auth.ts to avoid Encore runtime dependency)
+function generateAPIKey(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < 32; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
 
 console.log("🔑 Generated API Keys for Encore Secrets");
 console.log("=========================================");
