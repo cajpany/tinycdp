@@ -1,5 +1,9 @@
-import backend from '~backend/client';
+import { Client } from '~backend/client';
 import { toast } from '@/components/ui/use-toast';
+import { API_ENDPOINT } from '../config';
+
+// Create backend client with correct base URL
+const backend = new Client(API_ENDPOINT);
 
 // Get API key from localStorage or environment
 function getApiKey(): string {
@@ -19,9 +23,8 @@ export function getBackendClient() {
     return backend;
   }
   
-  // Create client with both auth function and explicit headers
+  // Create client with authentication headers
   return backend.with({
-    auth: async () => ({ authorization: `Bearer ${apiKey}` }),
     requestInit: {
       headers: {
         'Authorization': `Bearer ${apiKey}`,

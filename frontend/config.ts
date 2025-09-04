@@ -2,7 +2,9 @@
 
 // API endpoint for the TinyCDP backend
 // Update this to match your deployment
-export const API_ENDPOINT = 'http://localhost:4000';
+export const API_ENDPOINT = import.meta.env.PROD 
+  ? 'https://staging-tinycdp-s3b2.encr.app'
+  : 'http://localhost:4000';
 
 // Console version information
 export const CONSOLE_VERSION = '1.0.0';
