@@ -2,57 +2,83 @@
 
 TinyCDP is an open-source, real-time traits & segments engine - a lightweight replacement for Segment Personas / Amplitude Audiences. Apps send events and identities; TinyCDP computes user traits (e.g., "power_user", "recent_buyer"), evaluates segments from those traits, and exposes a low-latency Decisions API for instant feature flagging.
 
-> **Updated**: September 2025 - Fixed authentication and user search functionality
+> **Updated**: September 2025 - Production-ready with cloud deployment, Encore secrets, and comprehensive TypeScript SDK
+
+🌐 **Live Demo**: [https://staging-tinycdp-s3b2.encr.app/frontend/](https://staging-tinycdp-s3b2.encr.app/frontend/)  
+📊 **Dashboard**: Full web console with visual management  
+🔧 **SDK**: Production-ready TypeScript SDK with React integration  
+☁️ **Cloud Ready**: Deploy with Encore Cloud in one command
 
 ## Quick Start
 
-### Prerequisites
+### 🚀 Option 1: Try the Live Demo
+
+The fastest way to explore TinyCDP:
+
+1. **Visit the live demo**: [https://staging-tinycdp-s3b2.encr.app/frontend/](https://staging-tinycdp-s3b2.encr.app/frontend/)
+2. **Use the admin API key**: `uykXSMQkHIerkcmRcJ4sJYTxhQEKycfY`
+3. **Explore**: Pre-loaded with sample users, traits, segments, and flags
+4. **Test the SDK**: See [TypeScript SDK examples](./examples/)
+
+### 💻 Option 2: Local Development
+
+**Prerequisites:**
 - Node.js 18+
 - Encore CLI ([install here](https://encore.dev/docs/install))
 
-### Installation
+**Setup:**
 
-1. Clone the repository
-2. Install dependencies:
+1. **Clone and install**:
    ```bash
+   git clone https://github.com/cajpany/tinycdp.git
+   cd tinycdp
    npm install
    ```
 
-3. Create demo API keys:
+2. **Start the backend**:
    ```bash
-   cd backend && encore exec npx tsx ../scripts/create-demo-key.ts
+   cd backend && encore run
+   ```
+   The API will be available at `http://localhost:4000`
+
+3. **Set up secrets** (choose one):
+   - **Via Encore secrets**: Configure in [Encore Dashboard](https://app.encore.dev)
+   - **Via environment file**: Create `backend/.env` with your API keys
+
+4. **Seed sample data**:
+   ```bash
+   npx tsx scripts/seed-local.ts
    ```
 
-4. Seed the database with sample data (optional):
+5. **Start the frontend** (optional):
    ```bash
-   cd backend && encore exec npx tsx ../scripts/seed.ts
+   cd frontend && npm install && npm run dev
    ```
+   Web console available at `http://localhost:5173/`
 
-5. Start the development server:
-   ```bash
-   encore run
-   ```
+## 📊 Web Console
 
-   **Note**: Encore automatically runs database migrations on startup, so no separate migration command is needed.
+TinyCDP includes a powerful web console for managing traits, segments, and flags:
 
-The API will be available at `http://localhost:4000`
+### 🌐 **Live Demo**: [staging-tinycdp-s3b2.encr.app/frontend/](https://staging-tinycdp-s3b2.encr.app/frontend/)
+### 💻 **Local**: [localhost:5173](http://localhost:5173/) (when running locally)
 
-## Web Console
-
-TinyCDP includes a web console for managing traits, segments, and flags:
-
-1. **Access the console**: Open `http://localhost:4000` in your browser (when running locally)
-2. **Configure API key**: Go to Settings and paste your admin API key
-3. **Start managing**: Create traits, segments, and feature flags through the UI
+**Setup:**
+1. **Access the console** via the URLs above
+2. **Configure API key**: Go to Settings and enter your API key:
+   - **Live Demo**: `uykXSMQkHIerkcmRcJ4sJYTxhQEKycfY`
+   - **Local**: Use keys from your local secrets or database
+3. **Start managing**: Create and test traits, segments, and feature flags
 
 ### Console Features
 
-- **Dashboard**: System overview with metrics and activity
-- **Traits**: Create and manage trait definitions with expression testing
-- **Segments**: Define user segments with real-time validation
-- **Flags**: Configure feature flags with decision testing
-- **Users**: Search and explore user profiles and data
-- **Exports**: Export segment data as CSV files
+- 📊 **Dashboard**: Real-time system metrics and activity overview
+- 🧬 **Traits**: Visual trait builder with expression testing
+- 🎯 **Segments**: Segment designer with live validation
+- 🏳️ **Flags**: Feature flag management with decision testing
+- 👥 **Users**: Search and debug user profiles and data
+- 📄 **Exports**: CSV export with download management
+- ⚙️ **Settings**: API key configuration and system settings
 
 ## Project Structure
 
@@ -69,6 +95,8 @@ TinyCDP includes a web console for managing traits, segments, and flags:
 
 /frontend/           # React web console
 /packages/sdk/       # TypeScript SDK
+/examples/           # SDK usage examples
+/scripts/            # Development and deployment scripts
 ```
 
 ## Core Features ✅
@@ -107,10 +135,12 @@ TinyCDP includes a web console for managing traits, segments, and flags:
 - Secure signed download URLs
 
 **✅ TypeScript SDK**: Production-ready SDK
-- Browser and Node.js support
+- Browser and Node.js support  
 - Event batching with configurable flush
 - Automatic retries and error handling
 - Offline queueing support
+- React hooks and components
+- Comprehensive examples and documentation
 
 **✅ Web Console**: Complete management interface
 - Dashboard with system metrics
@@ -201,6 +231,111 @@ curl "http://localhost:4000/v1/export/segment/vip_users" \
 curl "http://localhost:4000/v1/export/list" \
   -H "Authorization: Bearer YOUR_ADMIN_KEY"
 ```
+
+## 💻 TypeScript SDK
+
+TinyCDP includes a comprehensive TypeScript SDK for easy integration into web and Node.js applications.
+
+### Quick Start
+
+```bash
+npm install @tinycdp/sdk
+```
+
+```typescript
+import { initTinyCDP } from '@tinycdp/sdk';
+
+// Initialize the client
+const tinycdp = initTinyCDP({
+  endpoint: 'https://staging-tinycdp-s3b2.encr.app',
+  writeKey: 'your-write-key',  // For identify() and track()
+  readKey: 'your-read-key',    // For decide()
+  debug: true,
+});
+
+// Identify a user
+await tinycdp.identify({
+  userId: 'user_123',
+  traits: { email: 'john@example.com', plan: 'premium' }
+});
+
+// Track events (automatically batched)
+tinycdp.track({
+  userId: 'user_123',
+  event: 'button_clicked',
+  properties: { button_name: 'signup', page: '/homepage' }
+});
+
+// Make real-time decisions
+const decision = await tinycdp.decide({
+  userId: 'user_123',
+  flag: 'premium_features'
+});
+
+if (decision.allow) {
+  // Show premium features
+}
+```
+
+### React Integration
+
+The SDK includes React hooks and components for seamless integration:
+
+```tsx
+import { TinyCDPProvider, useFeatureFlag, TrackedButton } from './examples/react-usage';
+
+// App-level provider
+function App() {
+  return (
+    <TinyCDPProvider
+      endpoint="https://staging-tinycdp-s3b2.encr.app"
+      writeKey="your-write-key"
+      readKey="your-read-key"
+    >
+      <HomePage />
+    </TinyCDPProvider>
+  );
+}
+
+// Feature flag hook
+function MyComponent() {
+  const { value: showFeature, loading } = useFeatureFlag('new_feature');
+  
+  if (loading) return <div>Loading...</div>;
+  return showFeature ? <NewFeature /> : <OldFeature />;
+}
+
+// Automatic event tracking
+function MyButton() {
+  return (
+    <TrackedButton 
+      trackingEvent="signup_clicked"
+      trackingProperties={{ source: 'homepage' }}
+    >
+      Sign Up
+    </TrackedButton>
+  );
+}
+```
+
+### 📚 SDK Examples
+
+Comprehensive examples are available in the [`examples/`](./examples/) directory:
+
+- **[`typescript-sdk-usage.ts`](./examples/typescript-sdk-usage.ts)**: Complete SDK integration examples
+- **[`react-usage.tsx`](./examples/react-usage.tsx)**: React hooks, components, and patterns
+- **[`README.md`](./examples/README.md)**: Getting started guide and best practices
+
+### 🔧 SDK Features
+
+- **✅ Event Batching**: Automatic batching with configurable flush intervals
+- **✅ Offline Support**: Queue events when offline, sync when online
+- **✅ Auto Retry**: Configurable retry logic with exponential backoff
+- **✅ TypeScript**: Full type safety and IntelliSense support
+- **✅ React Hooks**: `useFeatureFlag`, `useTracking`, `useExperiment`
+- **✅ Browser & Node**: Works in both browser and server environments
+- **✅ Debug Mode**: Detailed logging for development
+- **✅ Production Ready**: Battle-tested patterns and error handling
 
 ### Trait Expression Examples
 
@@ -328,48 +463,85 @@ TinyCDP is now production-ready with:
 - Detailed logging
 - Clear documentation
 
-## Getting Started with the Web Console
+## 🚀 Cloud Deployment
 
-1. **Start TinyCDP**:
+### Deploy to Encore Cloud
+
+1. **Deploy with one command**:
    ```bash
-   encore run
+   git push  # Automatically triggers deployment
    ```
 
-2. **Create API keys**:
+2. **Configure secrets** in the [Encore Dashboard](https://app.encore.dev):
+   - `ADMIN_API_KEY`: For admin operations
+   - `WRITE_API_KEY`: For identify() and track() calls  
+   - `READ_API_KEY`: For decide() calls
+
+3. **Seed production data**:
    ```bash
-   npx tsx scripts/create-demo-key.ts
+   npx tsx scripts/seed-cloud.ts
    ```
 
-3. **Access the console**: Open http://localhost:4000 in your browser
+4. **Access your deployment**: Your app will be available at `https://your-app.encr.app/frontend/`
 
-4. **Configure API key**: 
-   - Go to Settings
-   - Paste your admin API key
-   - Save
+### 📊 Configuration Options
 
-5. **Start building**:
-   - Create traits to define user characteristics
-   - Build segments to group users
-   - Set up feature flags for A/B testing
-   - Track events with the SDK
+#### Local Development
+- **Encore Secrets**: Configure in [Encore Dashboard](https://app.encore.dev)
+- **Environment File**: Create `backend/.env` with API keys
+- **Database Keys**: Use `scripts/create-demo-key.ts` for database-stored keys
 
-## Troubleshooting
+#### Production 
+- **Encore Secrets**: Managed secrets with automatic syncing
+- **Environment Variables**: Set via cloud platform
+- **Hybrid Approach**: Secrets for keys, environment for configuration
+
+## 🏠 Getting Started with the Web Console
+
+### 🌐 Live Demo
+1. **Visit**: [staging-tinycdp-s3b2.encr.app/frontend/](https://staging-tinycdp-s3b2.encr.app/frontend/)
+2. **Admin API key**: `uykXSMQkHIerkcmRcJ4sJYTxhQEKycfY`
+3. **Pre-loaded data**: Sample users, traits, segments, and flags ready to explore
+
+### 💻 Local Development
+1. **Start TinyCDP**: `encore run` (from backend directory)
+2. **Configure API key**: Go to Settings in the web console
+3. **Create sample data**: `npx tsx scripts/seed-local.ts`
+4. **Start building**: Create traits, segments, flags, and test with the SDK
+
+## 🔧 Troubleshooting
 
 ### Common Issues
 
-- **Console shows "API key required"**: Go to Settings and configure your admin API key
+#### Local Development
+- **"API key required" in console**: Set up secrets or create database keys
+- **Secrets not loading**: Ensure app is linked to correct Encore Cloud app
+- **500 errors**: Check if API keys are properly configured in secrets or environment
+- **Build issues**: Run `npm install` in both root and frontend directories
+
+#### Cloud Deployment  
+- **Deployment fails**: Check that secrets are configured in Encore Dashboard
+- **Frontend assets 404**: Ensure `base: '/frontend/'` is set in vite config
+- **API not accessible**: Verify root directory is set to `backend` in Encore settings
+
+#### General
 - **Database connection failures**: Check PostgreSQL is running and accessible
 - **Storage errors**: Verify object storage bucket configuration
-- **Service startup**: Check for port conflicts or missing dependencies
 - **Export failures**: Ensure object storage has proper write permissions
 
-### Getting Help
+### 🎯 Getting Help
 
-1. **Check health endpoints** - All services now provide detailed health information
-2. **Review logs** - Enhanced logging provides better error context
-3. **Run health check script** - Use `npx tsx scripts/health-check.ts` for comprehensive testing
-4. **Verify database** - Ensure migrations have run successfully
-5. **Check storage** - Verify object storage is properly configured
+#### Debug Tools
+1. **Health endpoints**: Check `/service-name/health` for each service
+2. **Comprehensive health check**: `npx tsx scripts/health-check.ts`
+3. **API testing**: `npx tsx scripts/test-api.ts YOUR_API_KEY`
+4. **Live demo**: Test functionality at [staging-tinycdp-s3b2.encr.app/frontend/](https://staging-tinycdp-s3b2.encr.app/frontend/)
+
+#### Configuration Issues
+- **Local secrets**: Use Encore Dashboard or create `backend/.env`
+- **App linking**: Run `encore app link YOUR_APP_ID` in backend directory
+- **API keys**: Generate via scripts or configure in Encore secrets
+- **Database**: Ensure `encore run` completes migration successfully
 
 ## License
 
