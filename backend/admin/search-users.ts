@@ -120,14 +120,42 @@ export const searchUsers = api<SearchUsersParams, SearchUsersResponse>(
         offset
       );
 
-      const users: UserSearchResult[] = usersRaw.map(user => ({
-        id: user.id,
-        created_at: user.created_at,
-        aliases: JSON.parse(user.aliases as string),
-        lastEventTime: user.last_event_time || undefined,
-        eventCount: parseInt(user.event_count, 10),
-        activeSegments: JSON.parse(user.active_segments as string) || []
-      }));
+      const users: UserSearchResult[] = usersRaw.map(user => {
+        // Safely parse JSON fields
+        let aliases: Array<{ kind: string; value: string }> = [];
+        let activeSegments: string[] = [];
+        
+        try {
+          if (typeof user.aliases === 'string') {
+            aliases = JSON.parse(user.aliases);
+          } else if (Array.isArray(user.aliases)) {
+            aliases = user.aliases;
+          }
+        } catch (error) {
+          logger.warn("Failed to parse user aliases", { userId: user.id, aliases: user.aliases, error });
+          aliases = [];
+        }
+        
+        try {
+          if (typeof user.active_segments === 'string') {
+            activeSegments = JSON.parse(user.active_segments);
+          } else if (Array.isArray(user.active_segments)) {
+            activeSegments = user.active_segments;
+          }
+        } catch (error) {
+          logger.warn("Failed to parse user active segments", { userId: user.id, activeSegments: user.active_segments, error });
+          activeSegments = [];
+        }
+        
+        return {
+          id: user.id,
+          created_at: user.created_at,
+          aliases,
+          lastEventTime: user.last_event_time || undefined,
+          eventCount: parseInt(user.event_count, 10),
+          activeSegments
+        };
+      });
 
       const hasMore = offset + limit < total;
 

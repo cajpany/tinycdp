@@ -19,8 +19,15 @@ export function getBackendClient() {
     return backend;
   }
   
+  // Create client with both auth function and explicit headers
   return backend.with({
-    auth: async () => ({ authorization: `Bearer ${apiKey}` })
+    auth: async () => ({ authorization: `Bearer ${apiKey}` }),
+    requestInit: {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    }
   });
 }
 
@@ -41,6 +48,7 @@ export const apiKeyManager = {
 // Error handler for API calls
 export function handleApiError(error: unknown) {
   console.error('API Error:', error);
+  console.log('Current API key:', getApiKey() ? 'Present' : 'Missing');
   
   let message = 'An unexpected error occurred';
   
@@ -48,8 +56,14 @@ export function handleApiError(error: unknown) {
     message = error.message;
     
     // Handle authentication errors specifically
-    if (message.includes('Valid API key required') || message.includes('unauthenticated')) {
-      message = 'Authentication required. Please set your API key in Settings.';
+    if (message.includes('Valid API key required') || 
+        message.includes('unauthenticated') ||
+        message.includes('originalError') && message.includes('Valid API key required')) {
+      const hasKey = getApiKey().length > 0;
+      message = hasKey 
+        ? 'Authentication failed. Please check your API key in Settings.'
+        : 'Authentication required. Please set your API key in Settings.';
+      console.log('Auth error - hasKey:', hasKey, 'keyLength:', getApiKey().length);
     }
   }
     

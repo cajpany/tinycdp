@@ -1,4 +1,5 @@
 import { createAPIKey } from '../backend/shared/auth';
+
 import { createLogger } from '../backend/shared/logger';
 
 const logger = createLogger("create-demo-key-script");
