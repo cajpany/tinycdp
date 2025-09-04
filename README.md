@@ -2,6 +2,8 @@
 
 TinyCDP is an open-source, real-time traits & segments engine - a lightweight replacement for Segment Personas / Amplitude Audiences. Apps send events and identities; TinyCDP computes user traits (e.g., "power_user", "recent_buyer"), evaluates segments from those traits, and exposes a low-latency Decisions API for instant feature flagging.
 
+> **Updated**: September 2025 - Fixed authentication and user search functionality
+
 ## Quick Start
 
 ### Prerequisites
