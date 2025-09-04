@@ -39,7 +39,7 @@ export function Flags() {
     queryKey: ['flags'],
     queryFn: async () => {
       try {
-        return await backend.admin.listFlags();
+        return await backend.admin.listFlags({});
       } catch (error) {
         handleApiError(error);
         throw error;

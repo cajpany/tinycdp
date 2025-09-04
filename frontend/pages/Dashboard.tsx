@@ -13,7 +13,7 @@ export function Dashboard() {
     queryKey: ['metrics'],
     queryFn: async () => {
       try {
-        return await backend.admin.getSystemMetrics();
+        return await backend.admin.getSystemMetrics({});
       } catch (error) {
         handleApiError(error);
         throw error;

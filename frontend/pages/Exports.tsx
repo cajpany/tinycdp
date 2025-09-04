@@ -17,7 +17,7 @@ export function Exports() {
     queryKey: ['exports'],
     queryFn: async () => {
       try {
-        return await backend.exports.listExports();
+        return await backend.exports.listExports({});
       } catch (error) {
         handleApiError(error);
         throw error;
@@ -29,7 +29,7 @@ export function Exports() {
     queryKey: ['segments'],
     queryFn: async () => {
       try {
-        return await backend.admin.listSegments();
+        return await backend.admin.listSegments({});
       } catch (error) {
         handleApiError(error);
         throw error;

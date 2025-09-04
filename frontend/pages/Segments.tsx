@@ -36,7 +36,7 @@ export function Segments() {
     queryKey: ['segments'],
     queryFn: async () => {
       try {
-        return await backend.admin.listSegments();
+        return await backend.admin.listSegments({});
       } catch (error) {
         handleApiError(error);
         throw error;

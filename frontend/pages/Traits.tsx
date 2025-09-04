@@ -35,7 +35,7 @@ export function Traits() {
     queryKey: ['traits'],
     queryFn: async () => {
       try {
-        return await backend.admin.listTraits();
+        return await backend.admin.listTraits({});
       } catch (error) {
         handleApiError(error);
         throw error;
