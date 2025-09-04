@@ -10,8 +10,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/components/ui/use-toast';
-import { getBackendClient, handleApiError } from '@/lib/api';
+import { getBackendClient, handleApiError, apiKeyManager } from '@/lib/api';
 import { Plus, Edit, Trash2, Play, AlertCircle, CheckCircle } from 'lucide-react';
+import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 
 interface TraitForm {
   key: string;
@@ -30,6 +31,7 @@ export function Traits() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const backend = getBackendClient();
+  const hasApiKey = apiKeyManager.hasKey();
 
   const { data: traits, isLoading } = useQuery({
     queryKey: ['traits'],
@@ -41,6 +43,7 @@ export function Traits() {
         throw error;
       }
     },
+    enabled: hasApiKey,
   });
 
   const createTrait = useMutation({
@@ -141,6 +144,10 @@ export function Traits() {
     setTestResult(null);
     setIsTestOpen(true);
   };
+
+  if (!hasApiKey) {
+    return <ApiKeyRequired pageName="Trait Definitions" />;
+  }
 
   return (
     <div className="space-y-6">

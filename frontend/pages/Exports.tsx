@@ -5,13 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/components/ui/use-toast';
-import { getBackendClient, handleApiError } from '@/lib/api';
+import { getBackendClient, handleApiError, apiKeyManager } from '@/lib/api';
 import { Download, FileText, Calendar, HardDrive, ExternalLink } from 'lucide-react';
+import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 
 export function Exports() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const backend = getBackendClient();
+  const hasApiKey = apiKeyManager.hasKey();
 
   const { data: exports, isLoading } = useQuery({
     queryKey: ['exports'],
@@ -23,6 +25,7 @@ export function Exports() {
         throw error;
       }
     },
+    enabled: hasApiKey,
   });
 
   const { data: segments } = useQuery({
@@ -35,6 +38,7 @@ export function Exports() {
         throw error;
       }
     },
+    enabled: hasApiKey,
   });
 
   const exportSegment = useMutation({
@@ -65,6 +69,10 @@ export function Exports() {
     const match = filename.match(/(\d{4}-\d{2}-\d{2})/);
     return match ? new Date(match[1]) : null;
   };
+
+  if (!hasApiKey) {
+    return <ApiKeyRequired pageName="Exports" />;
+  }
 
   return (
     <div className="space-y-6">

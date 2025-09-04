@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getBackendClient, handleApiError } from '@/lib/api';
+import { getBackendClient, handleApiError, apiKeyManager } from '@/lib/api';
 import { ArrowLeft, User, Calendar, Activity, Zap, Database, Clock } from 'lucide-react';
+import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 
 export function UserDetail() {
   const { userId } = useParams<{ userId: string }>();
   const backend = getBackendClient();
+  const hasApiKey = apiKeyManager.hasKey();
 
   const { data: user, isLoading, error } = useQuery({
     queryKey: ['user-detail', userId],
@@ -23,8 +25,12 @@ export function UserDetail() {
         throw error;
       }
     },
-    enabled: !!userId,
+    enabled: !!userId && hasApiKey,
   });
+
+  if (!hasApiKey) {
+    return <ApiKeyRequired pageName="User Details" />;
+  }
 
   if (error) {
     return (

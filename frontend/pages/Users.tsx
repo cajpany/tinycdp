@@ -5,13 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { getBackendClient, handleApiError } from '@/lib/api';
+import { getBackendClient, handleApiError, apiKeyManager } from '@/lib/api';
 import { Search, User, Calendar, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 
 export function Users() {
   const [searchQuery, setSearchQuery] = useState('');
   const backend = getBackendClient();
+  const hasApiKey = apiKeyManager.hasKey();
 
   const { data: users, isLoading, refetch } = useQuery({
     queryKey: ['users', searchQuery],
@@ -26,13 +28,17 @@ export function Users() {
         throw error;
       }
     },
-    enabled: true,
+    enabled: hasApiKey,
   });
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     refetch();
   };
+
+  if (!hasApiKey) {
+    return <ApiKeyRequired pageName="Users" />;
+  }
 
   return (
     <div className="space-y-6">

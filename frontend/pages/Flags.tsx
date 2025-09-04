@@ -10,8 +10,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/components/ui/use-toast';
-import { getBackendClient, handleApiError } from '@/lib/api';
+import { getBackendClient, handleApiError, apiKeyManager } from '@/lib/api';
 import { Plus, Edit, Trash2, Play, AlertCircle, CheckCircle, TestTube } from 'lucide-react';
+import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 
 interface FlagForm {
   key: string;
@@ -34,6 +35,7 @@ export function Flags() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const backend = getBackendClient();
+  const hasApiKey = apiKeyManager.hasKey();
 
   const { data: flags, isLoading } = useQuery({
     queryKey: ['flags'],
@@ -45,6 +47,7 @@ export function Flags() {
         throw error;
       }
     },
+    enabled: hasApiKey,
   });
 
   const createFlag = useMutation({
@@ -168,6 +171,10 @@ export function Flags() {
     setDecisionResult(null);
     setIsDecisionTestOpen(true);
   };
+
+  if (!hasApiKey) {
+    return <ApiKeyRequired pageName="Feature Flags" />;
+  }
 
   return (
     <div className="space-y-6">
