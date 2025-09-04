@@ -18,25 +18,22 @@ TinyCDP is an open-source, real-time traits & segments engine - a lightweight re
    npm install
    ```
 
-3. Run database migrations:
+3. Create demo API keys:
    ```bash
-   encore db migrate
+   cd backend && encore exec npx tsx ../scripts/create-demo-key.ts
    ```
 
-4. Create demo API keys:
+4. Seed the database with sample data (optional):
    ```bash
-   npx tsx scripts/create-demo-key.ts
+   cd backend && encore exec npx tsx ../scripts/seed.ts
    ```
 
-5. Seed the database with sample data (optional):
-   ```bash
-   npx tsx scripts/seed.ts
-   ```
-
-6. Start the development server:
+5. Start the development server:
    ```bash
    encore run
    ```
+
+   **Note**: Encore automatically runs database migrations on startup, so no separate migration command is needed.
 
 The API will be available at `http://localhost:4000`
 
@@ -128,7 +125,7 @@ TinyCDP includes a web console for managing traits, segments, and flags:
 
 ```bash
 # 1. Create demo API keys
-npx tsx scripts/create-demo-key.ts
+cd backend && encore exec npx tsx ../scripts/create-demo-key.ts
 
 # 2. Track user events
 curl -X POST http://localhost:4000/v1/track \
