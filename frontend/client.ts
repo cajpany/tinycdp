@@ -155,6 +155,10 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
             const body: Record<string, any> = {
                 key:  params.key,
@@ -162,7 +166,7 @@ export namespace admin {
             }
 
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/flags`, {headers, method: "POST", body: JSON.stringify(body)})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/flags`, {headers, query, method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_flags_createFlag>
         }
 
@@ -175,6 +179,10 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
             const body: Record<string, any> = {
                 description: params.description,
@@ -182,7 +190,7 @@ export namespace admin {
             }
 
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/keys`, {headers, method: "POST", body: JSON.stringify(body)})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/keys`, {headers, query, method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_create_key_createKey>
         }
 
@@ -195,6 +203,10 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
             const body: Record<string, any> = {
                 key:  params.key,
@@ -202,7 +214,7 @@ export namespace admin {
             }
 
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/segments`, {headers, method: "POST", body: JSON.stringify(body)})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/segments`, {headers, query, method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_segments_createSegment>
         }
 
@@ -215,6 +227,10 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
             const body: Record<string, any> = {
                 expression: params.expression,
@@ -222,7 +238,7 @@ export namespace admin {
             }
 
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/traits`, {headers, method: "POST", body: JSON.stringify(body)})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/traits`, {headers, query, method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_traits_createTrait>
         }
 
@@ -235,7 +251,11 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
-            await this.baseClient.callTypedAPI(`/v1/admin/flags/${encodeURIComponent(params.key)}`, {headers, method: "DELETE", body: undefined})
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
+            await this.baseClient.callTypedAPI(`/v1/admin/flags/${encodeURIComponent(params.key)}`, {headers, query, method: "DELETE", body: undefined})
         }
 
         /**
@@ -247,7 +267,11 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
-            await this.baseClient.callTypedAPI(`/v1/admin/segments/${encodeURIComponent(params.key)}`, {headers, method: "DELETE", body: undefined})
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
+            await this.baseClient.callTypedAPI(`/v1/admin/segments/${encodeURIComponent(params.key)}`, {headers, query, method: "DELETE", body: undefined})
         }
 
         /**
@@ -259,7 +283,11 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
-            await this.baseClient.callTypedAPI(`/v1/admin/traits/${encodeURIComponent(params.key)}`, {headers, method: "DELETE", body: undefined})
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
+            await this.baseClient.callTypedAPI(`/v1/admin/traits/${encodeURIComponent(params.key)}`, {headers, query, method: "DELETE", body: undefined})
         }
 
         /**
@@ -271,8 +299,12 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/metrics`, {headers, method: "GET", body: undefined})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/metrics`, {headers, query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_system_metrics_getSystemMetrics>
         }
 
@@ -285,8 +317,12 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/users/${encodeURIComponent(params.userId)}`, {headers, method: "GET", body: undefined})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/users/${encodeURIComponent(params.userId)}`, {headers, query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_user_detail_getUserDetail>
         }
 
@@ -308,8 +344,12 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/flags`, {headers, method: "GET", body: undefined})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/flags`, {headers, query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_flags_listFlags>
         }
 
@@ -322,8 +362,12 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/segments`, {headers, method: "GET", body: undefined})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/segments`, {headers, query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_segments_listSegments>
         }
 
@@ -336,8 +380,12 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/traits`, {headers, method: "GET", body: undefined})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/traits`, {headers, query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_traits_listTraits>
         }
 
@@ -351,6 +399,7 @@ export namespace admin {
             })
 
             const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
                 limit:  params.limit === undefined ? undefined : String(params.limit),
                 offset: params.offset === undefined ? undefined : String(params.offset),
                 query:  params.query,
@@ -370,13 +419,17 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
             const body: Record<string, any> = {
                 rule: params.rule,
             }
 
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/flags/${encodeURIComponent(params.key)}`, {headers, method: "PUT", body: JSON.stringify(body)})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/flags/${encodeURIComponent(params.key)}`, {headers, query, method: "PUT", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_flags_updateFlag>
         }
 
@@ -389,13 +442,17 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
             const body: Record<string, any> = {
                 rule: params.rule,
             }
 
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/segments/${encodeURIComponent(params.key)}`, {headers, method: "PUT", body: JSON.stringify(body)})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/segments/${encodeURIComponent(params.key)}`, {headers, query, method: "PUT", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_segments_updateSegment>
         }
 
@@ -408,13 +465,17 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
             const body: Record<string, any> = {
                 expression: params.expression,
             }
 
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/traits/${encodeURIComponent(params.key)}`, {headers, method: "PUT", body: JSON.stringify(body)})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/traits/${encodeURIComponent(params.key)}`, {headers, query, method: "PUT", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_traits_updateTrait>
         }
 
@@ -427,6 +488,10 @@ export namespace admin {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
             const body: Record<string, any> = {
                 expression: params.expression,
@@ -434,7 +499,7 @@ export namespace admin {
             }
 
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/admin/validate`, {headers, method: "POST", body: JSON.stringify(body)})
+            const resp = await this.baseClient.callTypedAPI(`/v1/admin/validate`, {headers, query, method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_admin_validate_expression_validateExpression>
         }
     }
@@ -467,6 +532,7 @@ export namespace decide {
             })
 
             const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
                 flag:   params.flag,
                 userId: params.userId,
             })
@@ -515,8 +581,12 @@ export namespace exports {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/export/segment/${encodeURIComponent(params.key)}`, {headers, method: "GET", body: undefined})
+            const resp = await this.baseClient.callTypedAPI(`/v1/export/segment/${encodeURIComponent(params.key)}`, {headers, query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_exports_csv_export_exportSegment>
         }
 
@@ -538,8 +608,12 @@ export namespace exports {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/export/list`, {headers, method: "GET", body: undefined})
+            const resp = await this.baseClient.callTypedAPI(`/v1/export/list`, {headers, query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_exports_list_exports_listExports>
         }
     }
@@ -608,6 +682,10 @@ export namespace ingest {
                 authorization: params.authorization,
             })
 
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
+            })
+
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
             const body: Record<string, any> = {
                 deviceId:   params.deviceId,
@@ -617,7 +695,7 @@ export namespace ingest {
             }
 
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/identify`, {headers, method: "POST", body: JSON.stringify(body)})
+            const resp = await this.baseClient.callTypedAPI(`/v1/identify`, {headers, query, method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ingest_identify_identify>
         }
 
@@ -628,6 +706,10 @@ export namespace ingest {
             // Convert our params into the objects we need for the request
             const headers = makeRecord<string, string>({
                 authorization: params.authorization,
+            })
+
+            const query = makeRecord<string, string | string[]>({
+                apiKey: params.apiKey,
             })
 
             // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
@@ -641,7 +723,7 @@ export namespace ingest {
             }
 
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/v1/track`, {headers, method: "POST", body: JSON.stringify(body)})
+            const resp = await this.baseClient.callTypedAPI(`/v1/track`, {headers, query, method: "POST", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_ingest_track_track>
         }
     }
