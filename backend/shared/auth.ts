@@ -1,9 +1,15 @@
 import { Header, APIError, Query } from "encore.dev/api";
+import { secret } from "encore.dev/config";
 import { createHash } from "crypto";
 import { db } from "./db";
 import { createLogger } from "./logger";
 
 const logger = createLogger("auth");
+
+// Encore secrets for API keys (alternative to database storage)
+const adminAPIKey = secret("ADMIN_API_KEY");
+const writeAPIKey = secret("WRITE_API_KEY");
+const readAPIKey = secret("READ_API_KEY");
 
 export interface AuthContext {
   keyId: string;
@@ -30,8 +36,40 @@ export function generateAPIKey(): string {
   return result;
 }
 
-// Validate API key and return auth context
-export async function validateAPIKey(params: AuthParams): Promise<AuthContext | null> {
+// Validate API key against Encore secrets (preferred for cloud deployment)
+export async function validateAPIKeyFromSecrets(params: AuthParams): Promise<AuthContext | null> {
+  const key = params.authorization?.replace('Bearer ', '') ?? params.apiKey;
+  if (!key) {
+    return null;
+  }
+
+  try {
+    // Check against secrets in order of permission level
+    if (key === adminAPIKey()) {
+      logger.debug("Admin API key validated from secrets");
+      return { keyId: "admin-secret", kind: "admin" };
+    }
+    
+    if (key === writeAPIKey()) {
+      logger.debug("Write API key validated from secrets");
+      return { keyId: "write-secret", kind: "write" };
+    }
+    
+    if (key === readAPIKey()) {
+      logger.debug("Read API key validated from secrets");
+      return { keyId: "read-secret", kind: "read" };
+    }
+
+    logger.warn("Invalid API key (not found in secrets)");
+    return null;
+  } catch (error) {
+    logger.error("Failed to validate API key from secrets", error instanceof Error ? error : new Error(String(error)));
+    return null;
+  }
+}
+
+// Validate API key and return auth context (database-based - fallback)
+export async function validateAPIKeyFromDB(params: AuthParams): Promise<AuthContext | null> {
   const key = params.authorization?.replace('Bearer ', '') ?? params.apiKey;
   if (!key) {
     return null;
@@ -49,15 +87,27 @@ export async function validateAPIKey(params: AuthParams): Promise<AuthContext | 
       return null;
     }
 
-    logger.debug("API key validated", { keyId: apiKey.id, kind: apiKey.kind });
+    logger.debug("API key validated from database", { keyId: apiKey.id, kind: apiKey.kind });
     return {
       keyId: apiKey.id,
       kind: apiKey.kind
     };
   } catch (error) {
-    logger.error("Failed to validate API key", error instanceof Error ? error : new Error(String(error)));
+    logger.error("Failed to validate API key from database", error instanceof Error ? error : new Error(String(error)));
     return null;
   }
+}
+
+// Main validation function - tries secrets first, then database fallback
+export async function validateAPIKey(params: AuthParams): Promise<AuthContext | null> {
+  // First try Encore secrets (preferred for cloud deployment)
+  const secretAuth = await validateAPIKeyFromSecrets(params);
+  if (secretAuth) {
+    return secretAuth;
+  }
+
+  // Fallback to database-based keys (for development/backwards compatibility)
+  return await validateAPIKeyFromDB(params);
 }
 
 // Require specific permission level
