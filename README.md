@@ -393,18 +393,34 @@ Each health check includes:
 
 ### Testing
 
-Run the test suite:
+#### Backend Unit Tests
+
+Comprehensive backend test suite with 24 tests covering core business logic:
 
 ```bash
+# Run all backend unit tests (recommended)
+encore test -- --pool=forks --no-file-parallelism
+
+# Alternative: run from root
 npm test
 ```
 
-Test SDK functionality end-to-end:
+**Test Coverage (24 tests total):**
+- **DSL Engine** (18 tests): Lexer, parser, evaluator, validation
+- **Trait Computation** (3 tests): Business logic with mocked database
+- **Database Connectivity** (2 tests): Connection and query testing
+- **Health Checks** (1 test): Service health monitoring
+
+#### SDK Integration Tests
+
+Test SDK functionality end-to-end against live staging:
 
 ```bash
 # Test SDK examples against live staging environment
 npx tsx examples/test-sdk-example.ts
 ```
+
+#### API Integration Tests
 
 Test Phase 4 functionality:
 
@@ -473,10 +489,11 @@ TinyCDP is now production-ready with:
 - Full TypeScript support
 
 **✅ Developer Experience:**
-- Comprehensive testing tools
-- Health check endpoints
-- Detailed logging
-- Clear documentation
+- **Comprehensive testing suite**: 24 backend unit tests + SDK integration tests
+- **Production-ready test infrastructure**: Vitest with Encore compatibility
+- **Health check endpoints**: Real-time service monitoring
+- **Detailed structured logging**: JSON logging across all services
+- **Clear documentation**: Complete API docs and examples
 
 ## 🚀 Cloud Deployment
 
@@ -538,6 +555,12 @@ TinyCDP is now production-ready with:
 - **Deployment fails**: Check that secrets are configured in Encore Dashboard
 - **Frontend assets 404**: Ensure `base: '/frontend/'` is set in vite config
 - **API not accessible**: Verify root directory is set to `backend` in Encore settings
+
+#### Testing Issues
+- **"esbuild service stopped" errors**: Use `encore test -- --pool=forks --no-file-parallelism`
+- **Mixed toolchain issues**: Ensure consistent Node.js usage (not Bun) for backend tests
+- **Tests not found**: Run from root with `npm test` or from backend with `encore test`
+- **ENCORE_RUNTIME_LIB errors**: Always use `encore test` instead of direct `vitest run`
 
 #### General
 - **Database connection failures**: Check PostgreSQL is running and accessible
