@@ -2,7 +2,6 @@
   "name": "backend",
   "version": "1.0.0",
   "type": "module",
-  "packageManager": "bun",
   "scripts": {
     "build": "cd ../frontend && bun install && vite build --outDir=../backend/frontend/dist",
     "test": "vitest run",
@@ -12,7 +11,12 @@
     "encore.dev": "^1.49.3"
   },
   "devDependencies": {
+    "@types/node": "^22.18.1",
     "typescript": "^5.9.2",
+    "vite": "^5.4.19",
     "vitest": "^3.2.4"
+  },
+  "overrides": {
+    "esbuild": "0.21.5"
   }
 }
